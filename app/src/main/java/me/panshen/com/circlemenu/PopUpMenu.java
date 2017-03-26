@@ -27,7 +27,6 @@ public class PopUpMenu extends RelativeLayout {
     ValueAnimator animator = null;
     Point point = null;
     View mask = null;
-    DisplayDirection displayDirection = DisplayDirection.TOP;
     Rect rectWindowRange;
     Point windowCenterPoint = null;
     RectF arcRange = null;
@@ -73,17 +72,6 @@ public class PopUpMenu extends RelativeLayout {
     }
 
     Paint mPaint = null;
-    Path path = new Path();
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-//        path.reset();
-//        mPaint.setColor(Color.parseColor("#ff0000"));
-//        RectF arcRange = new RectF(point.x - 230, point.y - 230, point.x + 230, point.y + 230);
-//        path.addArc(arcRange, startAngle, endAngle - startAngle);
-//        canvas.drawPath(path, mPaint);
-    }
 
     public void resetCenter(Point point) {
         this.point = point;
@@ -182,10 +170,6 @@ public class PopUpMenu extends RelativeLayout {
             bts.get(i).x = x;
             bts.get(i).y = y;
         }
-    }
-
-    enum DisplayDirection {
-        LEFT, TOP, RIGHT, BOTTOM
     }
 
     enum OverScreen {
