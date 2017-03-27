@@ -31,12 +31,22 @@ public class MenuButton extends View {
     Rect rect = new Rect();
     boolean outanimating = false;
     boolean inanimating = false;
-    private int gapWidth = 8;
+    private int strokeWidth = 8;
     BUTTON_STATE buttonState = BUTTON_STATE.NORMAL;
-
+    PopUpMenu popUpMenu = null;
     String name = "";
     ValueAnimator inanim = null;
     ValueAnimator outanim = null;
+
+    public boolean isInSelecte() {
+        return inSelecte;
+    }
+
+    public void setInSelecte(boolean inSelecte) {
+        this.inSelecte = inSelecte;
+    }
+
+    boolean inSelecte = false;
 
     public MenuButton(Context context, Bitmap img, String name) {
         super(context);
@@ -52,8 +62,8 @@ public class MenuButton extends View {
     }
 
     void init() {
-        inanim = ValueAnimator.ofFloat(1.0f, 1.2f);
-        inanim.setDuration(200);
+        inanim = ValueAnimator.ofFloat(1.0f, 1.1f);
+        inanim.setDuration(100);
         inanim.setInterpolator(new LinearInterpolator());
         inanim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -73,12 +83,14 @@ public class MenuButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 inanimating = true;
+                inSelecte = true;
                 buttonState = BUTTON_STATE.BIG;
+                popUpMenu.setSelectedname(name);
             }
         });
 
-        outanim = ValueAnimator.ofFloat(1.2f, 1.0f);
-        outanim.setDuration(200);
+        outanim = ValueAnimator.ofFloat(1.1f, 1.0f);
+        outanim.setDuration(100);
         outanim.setInterpolator(new LinearInterpolator());
         outanim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -100,19 +112,31 @@ public class MenuButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 outanimating = true;
+                inSelecte = false;
+
             }
         });
 
         mPaint.setAntiAlias(true);
         mPaint.setAlpha(mAlpha);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(gapWidth);
+        mPaint.setStrokeWidth(strokeWidth);
         mPaint.setColor(mColor);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, width);
         setLayoutParams(layoutParams);
         if (mBitmap != null)
             mBitmap = getScaledBitap();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        popUpMenu = (PopUpMenu) getParent();
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -125,38 +149,35 @@ public class MenuButton extends View {
         canvas.drawCircle(width / 2, width / 2, circleRadius, mPaint);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e(TAG, "dispatchTouchEvent ACTION_DOWN");
+                popUpMenu.setSelectedname("NULL");
+                setScaleX(1f);
+                setScaleY(1f);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.e(TAG, "dispatchTouchEvent ACTION_MOVE");
                 int x = (int) event.getRawX();
                 int y = (int) event.getRawY();
-                Log.e(TAG, "x" + x + "--" + "y" + y);
                 getHitRect(rect);
-
-                if (rect.contains(x, y)) {//如果在此View中
-                    if(buttonState.equals(BUTTON_STATE.NORMAL) && !inanimating){
+                if (rect.contains(x, y)) {
+                    if (buttonState.equals(BUTTON_STATE.NORMAL) && !inanimating) {
                         inanim.start();
+
                     }
-
-
                 } else if (buttonState.equals(BUTTON_STATE.BIG) && !outanimating && !inanimating) {
                     outanim.start();
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e(TAG, "dispatchTouchEvent ACTION_UP");
 
                 outanimating = false;
                 inanimating = false;
                 buttonState = BUTTON_STATE.NORMAL;
+
                 break;
 
             default:

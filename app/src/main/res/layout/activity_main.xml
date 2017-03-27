@@ -5,28 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="me.panshen.com.circlemenu.MainActivity">
-<me.panshen.com.circlemenu.PPCircle
-    android:layout_alignParentTop="true"
-    android:layout_width="match_parent"
-    android:layout_height="200dp">
-    <ImageView
-        android:layout_centerInParent="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="0dp" />
-</me.panshen.com.circlemenu.PPCircle>
+
     <me.panshen.com.circlemenu.PPCircle
-        android:layout_alignParentBottom="true"
+        android:id="@+id/ppcircle"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true">
+
         <ImageView
-            android:layout_centerInParent="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="0dp" />
+            android:layout_centerInParent="true"
+            android:layout_marginTop="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg" />
     </me.panshen.com.circlemenu.PPCircle>
+
 </RelativeLayout>
