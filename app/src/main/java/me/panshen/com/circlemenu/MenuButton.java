@@ -38,15 +38,6 @@ public class MenuButton extends View {
     ValueAnimator inanim = null;
     ValueAnimator outanim = null;
 
-    public boolean isInSelecte() {
-        return inSelecte;
-    }
-
-    public void setInSelecte(boolean inSelecte) {
-        this.inSelecte = inSelecte;
-    }
-
-    boolean inSelecte = false;
 
     public MenuButton(Context context, Bitmap img, String name) {
         super(context);
@@ -83,9 +74,7 @@ public class MenuButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 inanimating = true;
-                inSelecte = true;
                 buttonState = BUTTON_STATE.BIG;
-                popUpMenu.setSelectedname(name);
             }
         });
 
@@ -112,7 +101,6 @@ public class MenuButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 outanimating = true;
-                inSelecte = false;
 
             }
         });
@@ -144,9 +132,15 @@ public class MenuButton extends View {
         super.onDraw(canvas);
         circleRadius = width / 2 - margin;
 
-        if (mBitmap != null)
+
+        if(mBitmap==null){
+            mPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(width / 2, width / 2, circleRadius + circleRadius / 12, mPaint);
+        }else {
+            mPaint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(width / 2, width / 2, circleRadius, mPaint);
             canvas.drawBitmap(mBitmap, circleRadius + margin - mBitmap.getWidth() / 2, circleRadius + margin - mBitmap.getHeight() / 2, mPaint);
-        canvas.drawCircle(width / 2, width / 2, circleRadius, mPaint);
+        }
     }
 
     @Override
@@ -155,7 +149,6 @@ public class MenuButton extends View {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                popUpMenu.setSelectedname("NULL");
                 setScaleX(1f);
                 setScaleY(1f);
                 break;

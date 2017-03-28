@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         ppCircle = (PPCircle) findViewById(R.id.ppcircle);
         ppCircle.setOnMenuEventListener(new PPCircle.OnMenuEventListener() {
             @Override
-            public void onToggle(PopUpMenu popUpMenu, String index) {
+            public void onToggle(PopUpMenu popUpMenu, int index) {
                 Toast.makeText(MainActivity.this,index+"",0).show();
             }
         });

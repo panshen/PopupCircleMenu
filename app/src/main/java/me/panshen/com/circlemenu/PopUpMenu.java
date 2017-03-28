@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class PopUpMenu extends RelativeLayout {
     private String TAG = getClass().getName();
     View mask = null;
-    int radius = 250;
+    int radius = 265;
     Point point = null;
     RectF arcRange = null;
     Rect rectWindowRange = null;
@@ -28,16 +28,17 @@ public class PopUpMenu extends RelativeLayout {
     Point windowCenterPoint = null;
     ArrayList<MenuButton> bts = null;
     OverScreen enumOverScreen = OverScreen.NORMAL;
+    Paint mPaint = null;
+    int selectedIndex = 0;
 
-    public String getSelectedname() {
-        return selectedname;
+    public int getSelectedIndex() {
+        return selectedIndex;
     }
 
-    public void setSelectedname(String selectedname) {
-        this.selectedname = selectedname;
+    public void setSelectedIndex(int selectedIndex) {
+        this.selectedIndex = selectedIndex;
     }
 
-    String selectedname = "";
     public PopUpMenu(Activity context, ArrayList<MenuButton> bts) {
         super(context);
         Log.e(TAG, "init");
@@ -65,8 +66,6 @@ public class PopUpMenu extends RelativeLayout {
         setWillNotDraw(false);
     }
 
-    Paint mPaint = null;
-
     public void resetCenter(Point point) {
         this.point = point;
         invalidate();
@@ -90,11 +89,11 @@ public class PopUpMenu extends RelativeLayout {
     void updateMask(float f) {
         mask.setAlpha(f);
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         int action = ev.getAction();
-        int x = (int) ev.getRawX();
-        int y = (int) ev.getRawY();
+
         switch (action) {
 
             case MotionEvent.ACTION_DOWN:
@@ -112,11 +111,22 @@ public class PopUpMenu extends RelativeLayout {
                 }
                 return false;
             case MotionEvent.ACTION_UP:
-                x = (int) ev.getRawX();
-                y = (int) ev.getRawY();
+                int x = (int) ev.getRawX();
+                int y = (int) ev.getRawY();
+                MenuButton mb;
 
-                for (final MenuButton mb : bts) {
+                for (int i = 0; i < bts.size(); i++) {
+
+                    mb = bts.get(i);
                     mb.dispatchTouchEvent(ev);
+                    mb.getHitRect(btTempRect);
+                    if (btTempRect.contains(x, y)) {
+
+                        Log.e("upup",mb.getName()+"index"+i);
+
+                        setSelectedIndex(i);
+
+                    }
                 }
 
                 return false;
@@ -151,14 +161,11 @@ public class PopUpMenu extends RelativeLayout {
                 enumOverScreen.setOverScreenDistance(overScrren);
             }
         }
-
-        Log.e("getDirection", enumOverScreen.toString());
     }
 
     public void genPos(Path orbit) {
         PathMeasure measure = new PathMeasure(orbit, false);
         int divisor = bts.size();
-
         for (int i = 1; i < bts.size(); i++) {
             float[] coords = new float[]{0f, 0f};
             int length = (int) ((i) * measure.getLength() / divisor);
@@ -207,25 +214,25 @@ public class PopUpMenu extends RelativeLayout {
 
     public Path producePath(OverScreen overScreen) {
         Path orbit = new Path();
-        int startAngle = 180;
-        int endAngle = 360;
+        int start = 160;
+        int end = 380;
         arcRange = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
 
         switch (overScreen) {
             case LEFT:
-                startAngle -= overScreen.getOverScreenDistance() / 4;
-                endAngle -= overScreen.getOverScreenDistance() / 4;
+                start -= overScreen.getOverScreenDistance() / 4;
+                end -= overScreen.getOverScreenDistance() / 4;
                 break;
             case RIGHT:
-                startAngle -= overScreen.getOverScreenDistance() / 4;
-                endAngle -= overScreen.getOverScreenDistance() / 4;
+                start -= overScreen.getOverScreenDistance() / 4;
+                end -= overScreen.getOverScreenDistance() / 4;
                 break;
             case NORMAL:
 
                 break;
         }
 
-        orbit.addArc(arcRange, startAngle, endAngle - startAngle);
+        orbit.addArc(arcRange, start, end - start);
 
         return orbit;
     }

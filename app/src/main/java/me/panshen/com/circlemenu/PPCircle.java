@@ -56,14 +56,15 @@ public class PPCircle extends RelativeLayout {
                 }
             }
             if (msg.what == fingerLeave) {
-                onMenuEventListener.onToggle(popUpMenu, popUpMenu.selectedname);
                 MotionEvent ev = (MotionEvent) msg.obj;
-                popUpMenu.dispatchTouchEvent(ev);
+                popUpMenu.dispatchTouchEvent(ev);//发送UP事件  在up事件检测的哪按按钮被激活 所以回调只能在这一行之后调用
                 popUpMenu.setVisibility(INVISIBLE);
                 mDecorView.removeView(popUpMenu);
                 isshowing = false;
                 ableToggle = false;
                 getParent().requestDisallowInterceptTouchEvent(false);
+                onMenuEventListener.onToggle(popUpMenu, popUpMenu.getSelectedIndex());
+
             }
         }
     };
@@ -102,19 +103,16 @@ public class PPCircle extends RelativeLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                Log.e("alphaAnim", "onAnimationEnd");
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
                 super.onAnimationRepeat(animation);
-                Log.e("alphaAnim", "onAnimationRepeat");
             }
 
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
-                Log.e("alphaAnim", "onAnimationStart");
             }
         });
 
@@ -132,7 +130,6 @@ public class PPCircle extends RelativeLayout {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e(TAG, "dispatchTouchEvent ACTION_DOWN");
 
                 downmillionSecond = System.currentTimeMillis();
 
@@ -140,12 +137,10 @@ public class PPCircle extends RelativeLayout {
                 downY = (int) ev.getRawY();
 
                 downArea = new Rect(downX - distanceShow, downY - distanceShow, downX + distanceShow, downY + distanceShow);
-                Log.e("dispatchTouchEvent", downArea.toString());
                 getParent().requestDisallowInterceptTouchEvent(true);
 
                 return true;
             case MotionEvent.ACTION_MOVE:
-                Log.e(TAG, "dispatchTouchEvent ACTION_MOVE");
                 currentX = (int) ev.getRawX();
                 currentY = (int) ev.getRawY();
 
@@ -174,7 +169,6 @@ public class PPCircle extends RelativeLayout {
                 }
                 return false;
             case MotionEvent.ACTION_UP:
-                Log.e(TAG, "dispatchTouchEvent ACTION_UP");
                 if (popUpMenu.getVisibility() == VISIBLE) {
                     alphaAnim.reverse();
                     Message msg = Message.obtain();
@@ -188,7 +182,7 @@ public class PPCircle extends RelativeLayout {
     }
 
     public interface OnMenuEventListener {
-        void onToggle(PopUpMenu popUpMenu, String index);
+        void onToggle(PopUpMenu popUpMenu, int index);
     }
 
 }
