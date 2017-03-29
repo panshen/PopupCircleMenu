@@ -16,6 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:name=".testlistactivity"
+            android:exported="true"
+            ></activity>
+
     </application>
 
 </manifest>

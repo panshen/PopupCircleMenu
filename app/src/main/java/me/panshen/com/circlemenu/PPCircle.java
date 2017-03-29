@@ -176,6 +176,8 @@ public class PPCircle extends RelativeLayout {
                     msg.what = fingerLeave;
                     handler.sendMessageDelayed(msg, 300);
                 }
+                else
+                    handler.removeCallbacksAndMessages(null);
                 return false;
         }
         return false;

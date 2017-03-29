@@ -1,6 +1,7 @@
 package me.panshen.com.circlemenu;
 
 import android.app.Activity;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PopUpMenu extends RelativeLayout {
     private String TAG = getClass().getName();
@@ -30,6 +32,10 @@ public class PopUpMenu extends RelativeLayout {
     OverScreen enumOverScreen = OverScreen.NORMAL;
     Paint mPaint = null;
     int selectedIndex = 0;
+    Path one = new Path();
+
+    List<Path> paths = new ArrayList<Path>();
+    List<PathMeasure> measure = new ArrayList<PathMeasure>();
 
     public int getSelectedIndex() {
         return selectedIndex;
@@ -41,6 +47,7 @@ public class PopUpMenu extends RelativeLayout {
 
     public PopUpMenu(Activity context, ArrayList<MenuButton> bts) {
         super(context);
+
         Log.e(TAG, "init");
         setClickable(true);
         this.bts = bts;
@@ -56,8 +63,12 @@ public class PopUpMenu extends RelativeLayout {
         mask.setLayoutParams(rl);
         addView(mask);
         for (MenuButton mb : bts) {
+
+            paths.add(mb.getSelfPath());
+            measure.add(new PathMeasure());
             addView(mb);
         }
+
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
@@ -72,18 +83,32 @@ public class PopUpMenu extends RelativeLayout {
     }
 
     @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+    }
+
+    @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.e("PopUpMenu.onLayout", point.toString());
-        View view = getChildAt(0);//layout背景
+        Log.e("PopUpMenu.onLayout", "onLayout");
+        View view = getChildAt(0);//layout mask
+
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         View centerButton = getChildAt(1);//layout 中间的按钮
         centerButton.layout(point.x - centerButton.getMeasuredWidth() / 2, point.y - centerButton.getMeasuredHeight() / 2, point.x + centerButton.getMeasuredWidth() / 2, point.y + centerButton.getMeasuredHeight() / 2);
 
         genPos(producePath(enumOverScreen));
+
         for (int i = 1; i < bts.size(); i++) {
+
             MenuButton v = bts.get(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
+
+            Path path = v.getSelfPath();
+            path.moveTo(point.x, point.y);
+            path.lineTo(v.x + v.getMeasuredWidth() / 2, v.y + v.getMeasuredWidth() / 2);
+            measure.get(i).setPath(path, false);
         }
+
     }
 
     void updateMask(float f) {
@@ -104,9 +129,7 @@ public class PopUpMenu extends RelativeLayout {
                 }
                 return false;
             case MotionEvent.ACTION_MOVE:
-
-                for (int i = 0; i < bts.size(); i++) {
-                    if (i == 0) continue;
+                for (int i = 1; i < bts.size(); i++) {
                     bts.get(i).dispatchTouchEvent(ev);
                 }
                 return false;
@@ -121,12 +144,10 @@ public class PopUpMenu extends RelativeLayout {
                     mb.dispatchTouchEvent(ev);
                     mb.getHitRect(btTempRect);
                     if (btTempRect.contains(x, y)) {
-
-                        Log.e("upup",mb.getName()+"index"+i);
-
                         setSelectedIndex(i);
+                        break;
+                    } else setSelectedIndex(-1);
 
-                    }
                 }
 
                 return false;
@@ -214,8 +235,8 @@ public class PopUpMenu extends RelativeLayout {
 
     public Path producePath(OverScreen overScreen) {
         Path orbit = new Path();
-        int start = 160;
-        int end = 380;
+        int start = 170;
+        int end = 370;
         arcRange = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
 
         switch (overScreen) {

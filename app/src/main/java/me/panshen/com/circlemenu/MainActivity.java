@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         ppCircle.setOnMenuEventListener(new PPCircle.OnMenuEventListener() {
             @Override
             public void onToggle(PopUpMenu popUpMenu, int index) {
-                Toast.makeText(MainActivity.this,index+"",0).show();
+              Toast.makeText(MainActivity.this,index+"",0).show();
             }
         });
     }

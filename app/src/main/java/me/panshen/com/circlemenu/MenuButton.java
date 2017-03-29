@@ -9,6 +9,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -37,7 +39,28 @@ public class MenuButton extends View {
     String name = "";
     ValueAnimator inanim = null;
     ValueAnimator outanim = null;
+    Path selfPath = new Path();
 
+    public Point getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(Point endPoint) {
+        this.endPoint = endPoint;
+    }
+
+    Point endPoint = new Point();
+
+    public Path getSelfPath() {
+        if(selfPath!=null)
+            selfPath.reset();
+
+        return selfPath;
+    }
+
+    public void setSelfPath(Path selfPath) {
+        this.selfPath = selfPath;
+    }
 
     public MenuButton(Context context, Bitmap img, String name) {
         super(context);
@@ -101,7 +124,6 @@ public class MenuButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 outanimating = true;
-
             }
         });
 
@@ -132,6 +154,9 @@ public class MenuButton extends View {
         super.onDraw(canvas);
         circleRadius = width / 2 - margin;
 
+        if(selfPath!=null){
+            canvas.drawPath(selfPath,mPaint);
+        }
 
         if(mBitmap==null){
             mPaint.setStyle(Paint.Style.STROKE);
@@ -141,6 +166,7 @@ public class MenuButton extends View {
             canvas.drawCircle(width / 2, width / 2, circleRadius, mPaint);
             canvas.drawBitmap(mBitmap, circleRadius + margin - mBitmap.getWidth() / 2, circleRadius + margin - mBitmap.getHeight() / 2, mPaint);
         }
+
     }
 
     @Override
@@ -159,7 +185,6 @@ public class MenuButton extends View {
                 if (rect.contains(x, y)) {
                     if (buttonState.equals(BUTTON_STATE.NORMAL) && !inanimating) {
                         inanim.start();
-
                     }
                 } else if (buttonState.equals(BUTTON_STATE.BIG) && !outanimating && !inanimating) {
                     outanim.start();
