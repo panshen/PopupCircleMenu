@@ -56,15 +56,20 @@ public class PPCircle extends RelativeLayout {
                 }
             }
             if (msg.what == fingerLeave) {
-                MotionEvent ev = (MotionEvent) msg.obj;
-                popUpMenu.dispatchTouchEvent(ev);//发送UP事件  在up事件检测的哪按按钮被激活 所以回调只能在这一行之后调用
+//                MotionEvent ev = (MotionEvent) msg.obj;
+//                popUpMenu.dispatchTouchEvent(ev);//发送UP事件  在up事件检测的哪按按钮被激活 所以回调只能在这一行之后调用
+//                popUpMenu.setVisibility(INVISIBLE);
+//                mDecorView.removeView(popUpMenu);
+//                isshowing = false;
+//                ableToggle = false;
+//                getParent().requestDisallowInterceptTouchEvent(false);
+//                onMenuEventListener.onToggle(popUpMenu, popUpMenu.getSelectedIndex());
                 popUpMenu.setVisibility(INVISIBLE);
                 mDecorView.removeView(popUpMenu);
                 isshowing = false;
                 ableToggle = false;
                 getParent().requestDisallowInterceptTouchEvent(false);
                 onMenuEventListener.onToggle(popUpMenu, popUpMenu.getSelectedIndex());
-
             }
         }
     };
@@ -96,23 +101,6 @@ public class PPCircle extends RelativeLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 popUpMenu.updateMask(Float.valueOf(animation.getAnimatedValue() + ""));
-            }
-        });
-
-        alphaAnim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                super.onAnimationRepeat(animation);
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
             }
         });
 
@@ -168,13 +156,18 @@ public class PPCircle extends RelativeLayout {
                         popUpMenu.dispatchTouchEvent(ev);
                 }
                 return false;
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_UP://先发送up事件 300mm之后取消遮罩
                 if (popUpMenu.getVisibility() == VISIBLE) {
+
                     alphaAnim.reverse();
                     Message msg = Message.obtain();
                     msg.obj = ev;
                     msg.what = fingerLeave;
-                    handler.sendMessageDelayed(msg, 300);
+                    handler.sendMessageDelayed(msg,300);
+
+                 //   MotionEvent ev = (MotionEvent) msg.obj;
+                    popUpMenu.dispatchTouchEvent(ev);
+
                 }
                 else
                     handler.removeCallbacksAndMessages(null);

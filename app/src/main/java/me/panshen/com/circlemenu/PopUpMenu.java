@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PopUpMenu extends RelativeLayout {
     private String TAG = getClass().getName();
@@ -32,10 +31,6 @@ public class PopUpMenu extends RelativeLayout {
     OverScreen enumOverScreen = OverScreen.NORMAL;
     Paint mPaint = null;
     int selectedIndex = 0;
-    Path one = new Path();
-
-    List<Path> paths = new ArrayList<Path>();
-    List<PathMeasure> measure = new ArrayList<PathMeasure>();
 
     public int getSelectedIndex() {
         return selectedIndex;
@@ -64,9 +59,8 @@ public class PopUpMenu extends RelativeLayout {
         addView(mask);
         for (MenuButton mb : bts) {
 
-            paths.add(mb.getSelfPath());
-            measure.add(new PathMeasure());
             addView(mb);
+
         }
 
         mPaint = new Paint();
@@ -103,10 +97,11 @@ public class PopUpMenu extends RelativeLayout {
             MenuButton v = bts.get(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
 
-            Path path = v.getSelfPath();
-            path.moveTo(point.x, point.y);
-            path.lineTo(v.x + v.getMeasuredWidth() / 2, v.y + v.getMeasuredWidth() / 2);
-            measure.get(i).setPath(path, false);
+            Path path = v.getExplodePath();
+            path.moveTo(point.x- v.getMeasuredWidth()/2, point.y- v.getMeasuredHeight()/2);
+            path.lineTo(v.x, v.y );
+
+            v.explode();
         }
 
     }
@@ -139,9 +134,12 @@ public class PopUpMenu extends RelativeLayout {
                 MenuButton mb;
 
                 for (int i = 0; i < bts.size(); i++) {
+                    bts.get(i).dispatchTouchEvent(ev);
+                }
+
+                for (int i = 0; i < bts.size(); i++) {
 
                     mb = bts.get(i);
-                    mb.dispatchTouchEvent(ev);
                     mb.getHitRect(btTempRect);
                     if (btTempRect.contains(x, y)) {
                         setSelectedIndex(i);

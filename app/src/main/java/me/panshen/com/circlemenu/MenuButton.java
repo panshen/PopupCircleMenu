@@ -10,12 +10,17 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 
 
@@ -39,27 +44,30 @@ public class MenuButton extends View {
     String name = "";
     ValueAnimator inanim = null;
     ValueAnimator outanim = null;
-    Path selfPath = new Path();
 
+    ValueAnimator explodeAnim = null;
+    Path explodePath = new Path();
+    PathMeasure explodePathMeasure = new PathMeasure();
+    boolean reverse = false;
     public Point getEndPoint() {
         return endPoint;
     }
 
-    public void setEndPoint(Point endPoint) {
-        this.endPoint = endPoint;
+    public void setEndPoint(int x,int y) {
+        this.endPoint = new Point(x,y);
     }
 
     Point endPoint = new Point();
 
-    public Path getSelfPath() {
-        if(selfPath!=null)
-            selfPath.reset();
+    public Path getExplodePath() {
+        if(explodePath !=null)
+            explodePath.reset();
 
-        return selfPath;
+        return explodePath;
     }
 
-    public void setSelfPath(Path selfPath) {
-        this.selfPath = selfPath;
+    public void setExplodePath(Path explodePath) {
+        this.explodePath = explodePath;
     }
 
     public MenuButton(Context context, Bitmap img, String name) {
@@ -154,10 +162,6 @@ public class MenuButton extends View {
         super.onDraw(canvas);
         circleRadius = width / 2 - margin;
 
-        if(selfPath!=null){
-            canvas.drawPath(selfPath,mPaint);
-        }
-
         if(mBitmap==null){
             mPaint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(width / 2, width / 2, circleRadius + circleRadius / 12, mPaint);
@@ -169,16 +173,43 @@ public class MenuButton extends View {
 
     }
 
+    void explode(){
+        reverse = false;
+        explodePathMeasure.setPath(explodePath,false);
+
+        explodeAnim = ValueAnimator.ofFloat(explodePathMeasure.getLength(),0f);
+        explodeAnim.setDuration(300);
+        explodeAnim.setInterpolator(new LinearOutSlowInInterpolator());
+        explodeAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                float[] pos = {0,0};
+
+                float currentDis  = 0;
+                //if(!reverse)
+                    currentDis= explodePathMeasure.getLength()-Float.valueOf(animation.getAnimatedValue()+"");
+                //else currentDis = Float.valueOf(animation.getAnimatedValue()+"");
+                explodePathMeasure.getPosTan(currentDis,pos,null);
+                setX(pos[0]);
+                setY(pos[1]);
+            }
+        });
+        explodeAnim.start();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                Log.e(TAG,"MenuButton.ACTION_DOWN");
                 setScaleX(1f);
                 setScaleY(1f);
                 break;
             case MotionEvent.ACTION_MOVE:
+                Log.e(TAG,"MenuButton.ACTION_MOVE");
                 int x = (int) event.getRawX();
                 int y = (int) event.getRawY();
                 getHitRect(rect);
@@ -191,10 +222,15 @@ public class MenuButton extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-
+                Log.e(TAG,"MenuButton.ACTION_UP");
                 outanimating = false;
                 inanimating = false;
                 buttonState = BUTTON_STATE.NORMAL;
+
+                if(explodeAnim!=null&&explodePathMeasure!=null&&explodePath!=null) {
+                    reverse = true;
+                    explodeAnim.reverse();
+                }
 
                 break;
 
