@@ -204,12 +204,10 @@ public class MenuButton extends View {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e(TAG,"MenuButton.ACTION_DOWN");
                 setScaleX(1f);
                 setScaleY(1f);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.e(TAG,"MenuButton.ACTION_MOVE");
                 int x = (int) event.getRawX();
                 int y = (int) event.getRawY();
                 getHitRect(rect);
@@ -222,7 +220,6 @@ public class MenuButton extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e(TAG,"MenuButton.ACTION_UP");
                 outanimating = false;
                 inanimating = false;
                 buttonState = BUTTON_STATE.NORMAL;
