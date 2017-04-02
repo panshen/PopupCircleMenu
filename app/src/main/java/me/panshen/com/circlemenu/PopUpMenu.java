@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class PopUpMenu extends RelativeLayout {
     private String TAG = getClass().getName();
     View mask = null;
-    int radius = 265;
+    int radius = 250;
     Point point = null;
     RectF arcRange = null;
     Rect rectWindowRange = null;
@@ -40,12 +40,13 @@ public class PopUpMenu extends RelativeLayout {
         this.selectedIndex = selectedIndex;
     }
 
-    public PopUpMenu(Activity context, ArrayList<MenuButton> bts) {
+    public PopUpMenu(Activity context, ArrayList<MenuButton> bts,int radius) {
         super(context);
 
         Log.e(TAG, "init");
         setClickable(true);
         this.bts = bts;
+        this.radius = radius;
         Display display = context.getWindow().getWindowManager().getDefaultDisplay();
         rectWindowRange = new Rect();
         btTempRect = new Rect();
@@ -58,17 +59,15 @@ public class PopUpMenu extends RelativeLayout {
         mask.setLayoutParams(rl);
         addView(mask);
         for (MenuButton mb : bts) {
-
             addView(mb);
-
         }
 
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(10);
-        mPaint.setColor(Color.WHITE);
-        setWillNotDraw(false);
+//        mPaint = new Paint();
+//        mPaint.setAntiAlias(true);
+//        mPaint.setStyle(Paint.Style.STROKE);
+//        mPaint.setStrokeWidth(10);
+//        mPaint.setColor(Color.WHITE);
+//        setWillNotDraw(false);
     }
 
     public void resetCenter(Point point) {
@@ -76,21 +75,20 @@ public class PopUpMenu extends RelativeLayout {
         invalidate();
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-    }
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        super.onDraw(canvas);
+//    }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.e("PopUpMenu.onLayout", "onLayout");
         View view = getChildAt(0);//layout mask
 
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        View centerButton = getChildAt(1);//layout 中间的按钮
+        View centerButton = getChildAt(1);
         centerButton.layout(point.x - centerButton.getMeasuredWidth() / 2, point.y - centerButton.getMeasuredHeight() / 2, point.x + centerButton.getMeasuredWidth() / 2, point.y + centerButton.getMeasuredHeight() / 2);
 
-        genPos(producePath(enumOverScreen));
+        setPos(producePath(enumOverScreen));
 
         for (int i = 1; i < bts.size(); i++) {
 
@@ -128,7 +126,7 @@ public class PopUpMenu extends RelativeLayout {
                     bts.get(i).dispatchTouchEvent(ev);
                 }
                 return false;
-            case MotionEvent.ACTION_UP:
+            case   MotionEvent.ACTION_UP:
                 int x = (int) ev.getRawX();
                 int y = (int) ev.getRawY();
                 MenuButton mb;
@@ -182,7 +180,7 @@ public class PopUpMenu extends RelativeLayout {
         }
     }
 
-    public void genPos(Path orbit) {
+    public void setPos(Path orbit) {
         PathMeasure measure = new PathMeasure(orbit, false);
         int divisor = bts.size();
         for (int i = 1; i < bts.size(); i++) {
@@ -196,7 +194,7 @@ public class PopUpMenu extends RelativeLayout {
         }
     }
 
-    enum OverScreen {
+    private enum OverScreen {
         LEFT("LEFT", 0), RIGHT("RIGHT", 0), NORMAL("NORMAL", 0);
         private String type;
         private int overScreenDistance;

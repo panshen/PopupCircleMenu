@@ -1,11 +1,11 @@
 package me.panshen.com.circlemenu;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -13,9 +13,11 @@ import android.os.Message;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,13 @@ public class PPCircle extends RelativeLayout {
     boolean isshowing = false;
     ValueAnimator alphaAnim = null;
     OnMenuEventListener onMenuEventListener = null;
+
+    int btsize = 0;
+    int radius = 0;
+    int btbgcolor = 0;
+
+    int anim_duration = 0;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -56,14 +65,6 @@ public class PPCircle extends RelativeLayout {
                 }
             }
             if (msg.what == fingerLeave) {
-//                MotionEvent ev = (MotionEvent) msg.obj;
-//                popUpMenu.dispatchTouchEvent(ev);//发送UP事件  在up事件检测的哪按按钮被激活 所以回调只能在这一行之后调用
-//                popUpMenu.setVisibility(INVISIBLE);
-//                mDecorView.removeView(popUpMenu);
-//                isshowing = false;
-//                ableToggle = false;
-//                getParent().requestDisallowInterceptTouchEvent(false);
-//                onMenuEventListener.onToggle(popUpMenu, popUpMenu.getSelectedIndex());
                 popUpMenu.setVisibility(INVISIBLE);
                 mDecorView.removeView(popUpMenu);
                 isshowing = false;
@@ -82,20 +83,59 @@ public class PPCircle extends RelativeLayout {
         super(context, attrs);
         mContext = (Activity) context;
         setClickable(true);
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.circlemenu, 0, 0);
+        int n = a.getIndexCount();
 
+        for (int i = 0; i < n; i++) {
+            int attr = a.getIndex(i);
+            switch (attr) {
+
+                case R.styleable.circlemenu_button_color:
+                    btbgcolor = a.getColor(attr, Color.WHITE);
+                    break;
+                case R.styleable.circlemenu_button_size:
+
+                    btsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_SP, 40, getResources().getDisplayMetrics()));
+
+                    break;
+                case R.styleable.circlemenu_radius:
+                    radius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
+                    break;
+                case R.styleable.circlemenu_anim_duration:
+                    anim_duration = a.getInt(attr,300);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        Log.i("initvalues", radius + "radius");
+        Log.i("initvalues", btsize + "btsize");
+        Log.i("initvalues", btbgcolor + "btbgcolor");
+        initother();
+    }
+
+    public PPCircle(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+
+    }
+
+    void initother() {
         layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        mDecorView = (ViewGroup) ((Activity) context).getWindow().getDecorView();
+        mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
 
-        bts.add(new MenuButton(context, "菜单"));
-        bts.add(new MenuButton(context, BitmapFactory.decodeResource(getResources(), R.drawable.a4), "音乐"));
-        bts.add(new MenuButton(context, BitmapFactory.decodeResource(getResources(), R.drawable.a1), "衬衫"));
-        bts.add(new MenuButton(context, BitmapFactory.decodeResource(getResources(), R.drawable.a3), "喜欢"));
+        bts.add(new MenuButton(mContext, "菜单", btsize,btbgcolor,anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a4), "音乐", btsize,btbgcolor,anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a1), "衬衫", btsize,btbgcolor,anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a3), "喜欢", btsize,btbgcolor,anim_duration));
 
-        popUpMenu = new PopUpMenu(mContext, bts);
+        popUpMenu = new PopUpMenu(mContext, bts,radius);
         popUpMenu.setVisibility(INVISIBLE);
         alphaAnim = new ValueAnimator();
         alphaAnim.setFloatValues(0.0f, 1.0f);
-        alphaAnim.setDuration(300);
+        alphaAnim.setDuration(anim_duration);
         alphaAnim.setInterpolator(new LinearOutSlowInInterpolator());
         alphaAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -103,7 +143,6 @@ public class PPCircle extends RelativeLayout {
                 popUpMenu.updateMask(Float.valueOf(animation.getAnimatedValue() + ""));
             }
         });
-
     }
 
     public PPCircle(Context context) {
@@ -143,7 +182,7 @@ public class PPCircle extends RelativeLayout {
                     msg.what = juageDispatch;
 
                     if (popUpMenu.getVisibility() == INVISIBLE)
-                        handler.sendMessageDelayed(msg, 300);
+                        handler.sendMessageDelayed(msg, anim_duration);
                     else {
                         if (popUpMenu.getVisibility() == VISIBLE && isshowing)
                             popUpMenu.dispatchTouchEvent(ev);
@@ -156,20 +195,18 @@ public class PPCircle extends RelativeLayout {
                         popUpMenu.dispatchTouchEvent(ev);
                 }
                 return false;
-            case MotionEvent.ACTION_UP://先发送up事件 300mm之后取消遮罩
+            case MotionEvent.ACTION_UP:
                 if (popUpMenu.getVisibility() == VISIBLE) {
 
                     alphaAnim.reverse();
                     Message msg = Message.obtain();
                     msg.obj = ev;
                     msg.what = fingerLeave;
-                    handler.sendMessageDelayed(msg,300);
+                    handler.sendMessageDelayed(msg, anim_duration);//发送延迟的取消遮罩事件
 
-                 //   MotionEvent ev = (MotionEvent) msg.obj;
                     popUpMenu.dispatchTouchEvent(ev);
 
-                }
-                else
+                } else
                     handler.removeCallbacksAndMessages(null);
                 return false;
         }
