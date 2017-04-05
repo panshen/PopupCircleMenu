@@ -4,6 +4,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-
-/**
- * Created by XPS on 2017/3/23.
- */
 
 public class testlistactivity extends AppCompatActivity {
     ListView lv;
@@ -37,7 +35,6 @@ public class testlistactivity extends AppCompatActivity {
         }
 
         lv.setAdapter(new adapter());
-
     }
 
     private class adapter extends BaseAdapter {
@@ -71,8 +68,11 @@ public class testlistactivity extends AppCompatActivity {
             }
             vh.ppcircle.setOnMenuEventListener(new PPCircle.OnMenuEventListener() {
                 @Override
-                public void onToggle(PopUpMenu popUpMenu, int index) {
-                    Toast.makeText(testlistactivity.this, index + "", Toast.LENGTH_SHORT).show();
+                public void onMenuToggle(ArrayList<MenuButton> popUpMenu, int index) {
+                    if (index != -1)
+                        Toast.makeText(testlistactivity.this, popUpMenu.get(index).name + "", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(testlistactivity.this, index + "", Toast.LENGTH_SHORT).show();
                 }
             });
             return convertView;

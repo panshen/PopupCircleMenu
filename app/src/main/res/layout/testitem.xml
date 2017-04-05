@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:circlemenu="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:orientation="vertical">
@@ -8,7 +9,11 @@
         android:id="@+id/ppcircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        circlemenu:anim_duration="200"
+        circlemenu:button_color="#ffffff"
+        circlemenu:button_size="55dp"
+        circlemenu:radius="90dp">
 
         <ImageView
             android:id="@+id/iv"

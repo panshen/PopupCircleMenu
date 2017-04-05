@@ -7,25 +7,15 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 
@@ -43,7 +33,6 @@ public class MenuButton extends View {
     Rect rect = new Rect();
     boolean outanimating = false;
     boolean inanimating = false;
-    private int strokeWidth = 8;
     BUTTON_STATE buttonState = BUTTON_STATE.NORMAL;
     PopUpMenu popUpMenu = null;
     String name = "";
@@ -52,16 +41,16 @@ public class MenuButton extends View {
 
     int mAnimDuration = 0;
 
-    ValueAnimator explodeAnim = null;
-    Path explodePath = new Path();
-    PathMeasure explodePathMeasure = new PathMeasure();
+    ValueAnimator animeExplode = null;
+    Path pathExplode = new Path();
+    PathMeasure pathMeasureExplode = new PathMeasure();
     boolean reverse = false;
 
-    public Path getExplodePath() {
-        if (explodePath != null)
-            explodePath.reset();
+    public Path getPathExplode() {
+        if (pathExplode != null)
+            pathExplode.reset();
 
-        return explodePath;
+        return pathExplode;
     }
 
     public MenuButton(Context context, Bitmap img, String name, int px, int color, int anim_duration) {
@@ -162,10 +151,10 @@ public class MenuButton extends View {
         widthPx = getMeasuredWidth();
         margin = widthPx / 10;
         circleRadius = widthPx / 2 - margin;
-        mPaint.setStrokeWidth(margin);
+        mPaint.setStrokeWidth(margin / 2);
         if (mBitmap == null) {
             mPaint.setStyle(Paint.Style.STROKE);
-            canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius , mPaint);
+            canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius, mPaint);
         } else {
             mPaint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius, mPaint);
@@ -176,22 +165,21 @@ public class MenuButton extends View {
 
     void explode() {
         reverse = false;
-        explodePathMeasure.setPath(explodePath, false);
+        pathMeasureExplode.setPath(pathExplode, false);
 
-        PropertyValuesHolder propertyValuesHolder = PropertyValuesHolder.ofFloat("anim_scale", explodePathMeasure.getLength(), 0f);
+        PropertyValuesHolder propertyScaleAnim = PropertyValuesHolder.ofFloat("anim_scale", pathMeasureExplode.getLength(), 0f);
+        PropertyValuesHolder propertyAlphaAnim = PropertyValuesHolder.ofFloat("anim_alpha", 0.0f, 0.0f, 0.0f, 0.7f, 1.0f);
 
-        PropertyValuesHolder propertyValuesHolder2 = PropertyValuesHolder.ofFloat("anim_alpha", 0.0f, 1.0f);
-
-        explodeAnim = ValueAnimator.ofPropertyValuesHolder(propertyValuesHolder, propertyValuesHolder2);
-        explodeAnim.setDuration(mAnimDuration);
-        explodeAnim.setInterpolator(new LinearOutSlowInInterpolator());
-        explodeAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        animeExplode = ValueAnimator.ofPropertyValuesHolder(propertyScaleAnim, propertyAlphaAnim);
+        animeExplode.setDuration(mAnimDuration);
+        animeExplode.setInterpolator(new LinearOutSlowInInterpolator());
+        animeExplode.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float[] pos = {0, 0};
                 float animscaledValue = Float.valueOf(animation.getAnimatedValue("anim_scale") + "");
-                float currentDis = explodePathMeasure.getLength() - animscaledValue;
-                explodePathMeasure.getPosTan(currentDis, pos, null);
+                float currentDis = pathMeasureExplode.getLength() - animscaledValue;
+                pathMeasureExplode.getPosTan(currentDis, pos, null);
                 setX(pos[0]);
                 setY(pos[1]);
 
@@ -200,8 +188,7 @@ public class MenuButton extends View {
 
             }
         });
-        explodeAnim.start();
-
+        animeExplode.start();
     }
 
     @Override
@@ -231,9 +218,9 @@ public class MenuButton extends View {
                 inanimating = false;
                 buttonState = BUTTON_STATE.NORMAL;
 
-                if (explodeAnim != null && explodePathMeasure != null && explodePath != null) {
+                if (animeExplode != null && pathMeasureExplode != null && pathExplode != null) {
                     reverse = true;
-                    explodeAnim.reverse();
+                    animeExplode.reverse();
                 }
                 break;
 

@@ -1,7 +1,6 @@
 package me.panshen.com.circlemenu;
 
 import android.app.Activity;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -9,6 +8,7 @@ import android.graphics.PathMeasure;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -31,7 +31,7 @@ public class PopUpMenu extends RelativeLayout {
     OverScreen enumOverScreen = OverScreen.NORMAL;
     Paint mPaint = null;
     int selectedIndex = 0;
-
+    int rotate_rate = 0;
     public int getSelectedIndex() {
         return selectedIndex;
     }
@@ -40,13 +40,15 @@ public class PopUpMenu extends RelativeLayout {
         this.selectedIndex = selectedIndex;
     }
 
-    public PopUpMenu(Activity context, ArrayList<MenuButton> bts,int radius) {
+    public PopUpMenu(Activity context, ArrayList<MenuButton> bts, int radius) {
         super(context);
-
         Log.e(TAG, "init");
         setClickable(true);
         this.bts = bts;
         this.radius = radius;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+
         Display display = context.getWindow().getWindowManager().getDefaultDisplay();
         rectWindowRange = new Rect();
         btTempRect = new Rect();
@@ -58,16 +60,16 @@ public class PopUpMenu extends RelativeLayout {
         mask.setBackgroundColor(Color.parseColor("#66000000"));
         mask.setLayoutParams(rl);
         addView(mask);
+
         for (MenuButton mb : bts) {
             addView(mb);
         }
 
-//        mPaint = new Paint();
-//        mPaint.setAntiAlias(true);
-//        mPaint.setStyle(Paint.Style.STROKE);
-//        mPaint.setStrokeWidth(10);
-//        mPaint.setColor(Color.WHITE);
-//        setWillNotDraw(false);
+        display.getMetrics(displayMetrics);
+        rotate_rate = displayMetrics.widthPixels/radius;
+
+        Log.e(TAG,"radius"+displayMetrics.widthPixels/radius+"");
+
     }
 
     public void resetCenter(Point point) {
@@ -75,13 +77,10 @@ public class PopUpMenu extends RelativeLayout {
         invalidate();
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//    }
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        mask.setClickable(true);
+        mask.setOnTouchListener(null);
         View view = getChildAt(0);//layout mask
 
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
@@ -95,9 +94,9 @@ public class PopUpMenu extends RelativeLayout {
             MenuButton v = bts.get(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
 
-            Path path = v.getExplodePath();
-            path.moveTo(point.x- v.getMeasuredWidth()/2, point.y- v.getMeasuredHeight()/2);
-            path.lineTo(v.x, v.y );
+            Path path = v.getPathExplode();
+            path.moveTo(point.x - v.getMeasuredWidth() / 2, point.y - v.getMeasuredHeight() / 2);
+            path.lineTo(v.x, v.y);
 
             v.explode();
         }
@@ -126,7 +125,7 @@ public class PopUpMenu extends RelativeLayout {
                     bts.get(i).dispatchTouchEvent(ev);
                 }
                 return false;
-            case   MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_UP:
                 int x = (int) ev.getRawX();
                 int y = (int) ev.getRawY();
                 MenuButton mb;
@@ -136,14 +135,12 @@ public class PopUpMenu extends RelativeLayout {
                 }
 
                 for (int i = 0; i < bts.size(); i++) {
-
                     mb = bts.get(i);
                     mb.getHitRect(btTempRect);
                     if (btTempRect.contains(x, y)) {
                         setSelectedIndex(i);
                         break;
                     } else setSelectedIndex(-1);
-
                 }
 
                 return false;
@@ -157,25 +154,25 @@ public class PopUpMenu extends RelativeLayout {
     public void getDirection(MotionEvent ev) {
         int x = (int) ev.getRawX();
         int arcRightXpos = 0;
-        int overScrren = 0;
-        RectF arcRect = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
+        int overScreen = 0;
+        arcRange = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
         int centerX = windowCenterPoint.x;
         enumOverScreen = OverScreen.NORMAL;
 
         if (x < centerX) {
-            overScrren = (int) arcRect.left;
+            overScreen = (int) arcRange.left;
 
-            if (overScrren < 0) {
+            if (overScreen < 0) {
                 enumOverScreen = OverScreen.LEFT;
-                enumOverScreen.setOverScreenDistance(overScrren);
+                enumOverScreen.setOverScreenDistance(overScreen);
             }
 
         } else {
-            arcRightXpos = (int) (arcRect.centerX() + radius);
-            overScrren = arcRightXpos - rectWindowRange.width();
+            arcRightXpos = (int) (arcRange.centerX() + radius);//圆的最大X位置
+            overScreen = arcRightXpos - rectWindowRange.width();//圆超出屏幕的像素
             if (arcRightXpos > rectWindowRange.width()) {
                 enumOverScreen = OverScreen.RIGHT;
-                enumOverScreen.setOverScreenDistance(overScrren);
+                enumOverScreen.setOverScreenDistance(overScreen);
             }
         }
     }
@@ -231,28 +228,28 @@ public class PopUpMenu extends RelativeLayout {
 
     public Path producePath(OverScreen overScreen) {
         Path orbit = new Path();
-        int start = 170;
-        int end = 370;
-        arcRange = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
+        int start = 180;
+        int end = 360;
+
+        int overdis = Math.abs(overScreen.getOverScreenDistance());
 
         switch (overScreen) {
             case LEFT:
-                start -= overScreen.getOverScreenDistance() / 4;
-                end -= overScreen.getOverScreenDistance() / 4;
+                start += overdis / rotate_rate;
+                end += overdis / rotate_rate;
                 break;
+
             case RIGHT:
-                start -= overScreen.getOverScreenDistance() / 4;
-                end -= overScreen.getOverScreenDistance() / 4;
+                start -= overdis / rotate_rate;
+                end -= overdis / rotate_rate;
                 break;
+
             case NORMAL:
 
                 break;
         }
-
         orbit.addArc(arcRange, start, end - start);
 
         return orbit;
     }
-
-
 }

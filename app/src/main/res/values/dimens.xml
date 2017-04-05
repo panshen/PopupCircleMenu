@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="default_busize">60dp</dimen>
+    <dimen name="default_radius">100dp</dimen>
+
+</resources>

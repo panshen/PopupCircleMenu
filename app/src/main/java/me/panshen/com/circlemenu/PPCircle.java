@@ -12,12 +12,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,23 +28,24 @@ public class PPCircle extends RelativeLayout {
     ViewGroup mDecorView;
     RelativeLayout.LayoutParams layoutParams;
     ArrayList<MenuButton> bts = new ArrayList<>();
-    int distanceShow = 50;
-    long downmillionSecond = 0;
+    int showDistance = 25;
     Rect downArea = null;
-    static final int juageDispatch = 0;
-    static final int fingerLeave = 1;
+
+    final int juageDispatch = 0;
+    final int fingerLeave = 1;
+
     int currentX;
     int currentY;
-    boolean ableToggle = false;
     boolean isshowing = false;
+    boolean ableToggle = false;
     ValueAnimator alphaAnim = null;
     OnMenuEventListener onMenuEventListener = null;
-
     int btsize = 0;
     int radius = 0;
     int btbgcolor = 0;
+    int anim_duration = 250;
 
-    int anim_duration = 0;
+    static boolean isShowing;
 
     Handler handler = new Handler() {
         @Override
@@ -63,14 +64,13 @@ public class PPCircle extends RelativeLayout {
                     popUpMenu.dispatchTouchEvent(newEv);
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
-            }
-            if (msg.what == fingerLeave) {
+            } else if (msg.what == fingerLeave) {
                 popUpMenu.setVisibility(INVISIBLE);
                 mDecorView.removeView(popUpMenu);
                 isshowing = false;
                 ableToggle = false;
                 getParent().requestDisallowInterceptTouchEvent(false);
-                onMenuEventListener.onToggle(popUpMenu, popUpMenu.getSelectedIndex());
+                onMenuEventListener.onMenuToggle(popUpMenu.bts, popUpMenu.getSelectedIndex());
             }
         }
     };
@@ -86,6 +86,8 @@ public class PPCircle extends RelativeLayout {
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.circlemenu, 0, 0);
         int n = a.getIndexCount();
 
+        initDefaultParam();
+
         for (int i = 0; i < n; i++) {
             int attr = a.getIndex(i);
             switch (attr) {
@@ -94,44 +96,44 @@ public class PPCircle extends RelativeLayout {
                     btbgcolor = a.getColor(attr, Color.WHITE);
                     break;
                 case R.styleable.circlemenu_button_size:
-
                     btsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_SP, 40, getResources().getDisplayMetrics()));
-
                     break;
                 case R.styleable.circlemenu_radius:
                     radius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
                     break;
                 case R.styleable.circlemenu_anim_duration:
-                    anim_duration = a.getInt(attr,300);
+                    anim_duration = a.getInt(attr, 200);
                     break;
                 default:
                     break;
             }
         }
-
-        Log.i("initvalues", radius + "radius");
-        Log.i("initvalues", btsize + "btsize");
-        Log.i("initvalues", btbgcolor + "btbgcolor");
         initother();
+
+    }
+
+    void initDefaultParam() {
+        btsize = getResources().getDimensionPixelSize(R.dimen.default_busize);
+        radius = getResources().getDimensionPixelSize(R.dimen.default_radius);
+        btbgcolor = Color.WHITE;
     }
 
     public PPCircle(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
     }
 
     void initother() {
         layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
 
-        bts.add(new MenuButton(mContext, "菜单", btsize,btbgcolor,anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a4), "音乐", btsize,btbgcolor,anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a1), "衬衫", btsize,btbgcolor,anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a3), "喜欢", btsize,btbgcolor,anim_duration));
+        bts.add(new MenuButton(mContext, "菜单", btsize, btbgcolor, anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a4), "音乐", btsize, btbgcolor, anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a1), "衬衫", btsize, btbgcolor, anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a3), "喜欢", btsize, btbgcolor, anim_duration));
 
-        popUpMenu = new PopUpMenu(mContext, bts,radius);
+        popUpMenu = new PopUpMenu(mContext, bts, radius);
         popUpMenu.setVisibility(INVISIBLE);
         alphaAnim = new ValueAnimator();
         alphaAnim.setFloatValues(0.0f, 1.0f);
@@ -156,17 +158,19 @@ public class PPCircle extends RelativeLayout {
         int downY;
 
         switch (action) {
-            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_DOWN://down会多次执行 在多个手指触摸的时候
+                Log.e(TAG, "ACTION_DOWN");
 
-                downmillionSecond = System.currentTimeMillis();
-
-                downX = (int) ev.getRawX();
-                downY = (int) ev.getRawY();
-
-                downArea = new Rect(downX - distanceShow, downY - distanceShow, downX + distanceShow, downY + distanceShow);
-                getParent().requestDisallowInterceptTouchEvent(true);
-
-                return true;
+                if (isShowing) {
+                    return false;
+                } else {
+                    downX = (int) ev.getRawX();
+                    downY = (int) ev.getRawY();
+                    downArea = new Rect(downX - showDistance, downY - showDistance, downX + showDistance, downY + showDistance);
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    isShowing = true;
+                    return true;
+                }
             case MotionEvent.ACTION_MOVE:
                 currentX = (int) ev.getRawX();
                 currentY = (int) ev.getRawY();
@@ -176,7 +180,6 @@ public class PPCircle extends RelativeLayout {
                  * */
                 if (downArea.contains(currentX, currentY)) {
                     ableToggle = true;
-
                     Message msg = Message.obtain();
                     msg.obj = ev;
                     msg.what = juageDispatch;
@@ -191,30 +194,44 @@ public class PPCircle extends RelativeLayout {
                     if (popUpMenu.getVisibility() == INVISIBLE) {
                         ableToggle = false;
                         getParent().requestDisallowInterceptTouchEvent(false);
-                    } else
+                    } else {
                         popUpMenu.dispatchTouchEvent(ev);
+                    }
                 }
-                return false;
+                break;
             case MotionEvent.ACTION_UP:
-                if (popUpMenu.getVisibility() == VISIBLE) {
-
-                    alphaAnim.reverse();
-                    Message msg = Message.obtain();
-                    msg.obj = ev;
-                    msg.what = fingerLeave;
-                    handler.sendMessageDelayed(msg, anim_duration);//发送延迟的取消遮罩事件
-
-                    popUpMenu.dispatchTouchEvent(ev);
-
-                } else
-                    handler.removeCallbacksAndMessages(null);
-                return false;
+                Log.e(TAG, "ACTION_UP");
+                dismiss(ev);
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                Log.e(TAG, "ACTION_CANCEL");
+                dismiss(ev);
+                break;
         }
         return false;
     }
 
-    public interface OnMenuEventListener {
-        void onToggle(PopUpMenu popUpMenu, int index);
+    interface OnMenuEventListener {
+        void onMenuToggle(ArrayList<MenuButton> popUpMenu, int index);
+
+//        void onMenuFouce(ArrayList<MenuButton> popUpMenu, int index);
+    }
+
+    void dismiss(MotionEvent ev) {
+        isShowing = false;
+
+        if (popUpMenu.getVisibility() == VISIBLE) {
+
+            alphaAnim.reverse();
+            Message msg = Message.obtain();
+            msg.obj = ev;
+            msg.what = fingerLeave;
+            handler.sendMessageDelayed(msg, anim_duration);
+
+            popUpMenu.dispatchTouchEvent(ev);
+
+        } else
+            handler.removeCallbacksAndMessages(null);
     }
 
 }
