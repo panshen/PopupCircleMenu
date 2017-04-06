@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -29,14 +28,14 @@ public class PPCircle extends RelativeLayout {
     RelativeLayout.LayoutParams layoutParams;
     ArrayList<MenuButton> bts = new ArrayList<>();
     int showDistance = 25;
-    Rect downArea = null;
-
+    Rect triggerArea = null;
+    
     final int juageDispatch = 0;
     final int fingerLeave = 1;
 
     int currentX;
     int currentY;
-    boolean isshowing = false;
+    static boolean isshowing = false;
     boolean ableToggle = false;
     ValueAnimator alphaAnim = null;
     OnMenuEventListener onMenuEventListener = null;
@@ -44,8 +43,6 @@ public class PPCircle extends RelativeLayout {
     int radius = 0;
     int btbgcolor = 0;
     int anim_duration = 250;
-
-    static boolean isShowing;
 
     Handler handler = new Handler() {
         @Override
@@ -85,13 +82,11 @@ public class PPCircle extends RelativeLayout {
         setClickable(true);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.circlemenu, 0, 0);
         int n = a.getIndexCount();
-
         initDefaultParam();
 
         for (int i = 0; i < n; i++) {
             int attr = a.getIndex(i);
             switch (attr) {
-
                 case R.styleable.circlemenu_button_color:
                     btbgcolor = a.getColor(attr, Color.WHITE);
                     break;
@@ -111,7 +106,6 @@ public class PPCircle extends RelativeLayout {
             }
         }
         initother();
-
     }
 
     void initDefaultParam() {
@@ -129,9 +123,9 @@ public class PPCircle extends RelativeLayout {
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
 
         bts.add(new MenuButton(mContext, "菜单", btsize, btbgcolor, anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a4), "音乐", btsize, btbgcolor, anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a1), "衬衫", btsize, btbgcolor, anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.a3), "喜欢", btsize, btbgcolor, anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), "--", btsize, btbgcolor, anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), "--", btsize, btbgcolor, anim_duration));
+        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), "--", btsize, btbgcolor, anim_duration));
 
         popUpMenu = new PopUpMenu(mContext, bts, radius);
         popUpMenu.setVisibility(INVISIBLE);
@@ -158,38 +152,38 @@ public class PPCircle extends RelativeLayout {
         int downY;
 
         switch (action) {
-            case MotionEvent.ACTION_DOWN://down会多次执行 在多个手指触摸的时候
+            case MotionEvent.ACTION_DOWN:
                 Log.e(TAG, "ACTION_DOWN");
 
-                if (isShowing) {
+                if (isshowing) {
                     return false;
                 } else {
                     downX = (int) ev.getRawX();
                     downY = (int) ev.getRawY();
-                    downArea = new Rect(downX - showDistance, downY - showDistance, downX + showDistance, downY + showDistance);
+                    triggerArea = new Rect(downX - showDistance, downY - showDistance, downX + showDistance, downY + showDistance);
                     getParent().requestDisallowInterceptTouchEvent(true);
-                    isShowing = true;
+
+                    /**
+                     * 此处设计
+                     * 首先发出触发菜单消息 如果在n毫秒之内又检测到离开触发区域 则代表手指移动了设置flag = false不执行消息内容
+                     * */
+                    ableToggle = true;
+                    Message msg = Message.obtain();
+                    msg.obj = ev;
+                    msg.what = juageDispatch;
+                    if (popUpMenu.getVisibility() == INVISIBLE)
+                        handler.sendMessageDelayed(msg, anim_duration);
+
                     return true;
                 }
             case MotionEvent.ACTION_MOVE:
                 currentX = (int) ev.getRawX();
                 currentY = (int) ev.getRawY();
 
-                /**
-                 * 此处设计 检测到了在触发区域内会首先发出触发消息 如果在300毫秒之内又检测到离开触发区域 则代表手指移动了 设置flag不执行消息内容
-                 * */
-                if (downArea.contains(currentX, currentY)) {
-                    ableToggle = true;
-                    Message msg = Message.obtain();
-                    msg.obj = ev;
-                    msg.what = juageDispatch;
+                if (triggerArea.contains(currentX, currentY)) {
+                    if (popUpMenu.getVisibility() == VISIBLE && isshowing)
+                        popUpMenu.dispatchTouchEvent(ev);
 
-                    if (popUpMenu.getVisibility() == INVISIBLE)
-                        handler.sendMessageDelayed(msg, anim_duration);
-                    else {
-                        if (popUpMenu.getVisibility() == VISIBLE && isshowing)
-                            popUpMenu.dispatchTouchEvent(ev);
-                    }
                 } else {
                     if (popUpMenu.getVisibility() == INVISIBLE) {
                         ableToggle = false;
@@ -200,11 +194,9 @@ public class PPCircle extends RelativeLayout {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e(TAG, "ACTION_UP");
                 dismiss(ev);
                 break;
             case MotionEvent.ACTION_CANCEL:
-                Log.e(TAG, "ACTION_CANCEL");
                 dismiss(ev);
                 break;
         }
@@ -218,20 +210,18 @@ public class PPCircle extends RelativeLayout {
     }
 
     void dismiss(MotionEvent ev) {
-        isShowing = false;
+        isshowing = false;
 
         if (popUpMenu.getVisibility() == VISIBLE) {
-
             alphaAnim.reverse();
             Message msg = Message.obtain();
             msg.obj = ev;
             msg.what = fingerLeave;
             handler.sendMessageDelayed(msg, anim_duration);
-
             popUpMenu.dispatchTouchEvent(ev);
-
-        } else
+        } else {
             handler.removeCallbacksAndMessages(null);
+        }
     }
 
 }

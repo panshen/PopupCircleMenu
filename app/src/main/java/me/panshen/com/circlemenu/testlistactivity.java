@@ -69,10 +69,10 @@ public class testlistactivity extends AppCompatActivity {
             vh.ppcircle.setOnMenuEventListener(new PPCircle.OnMenuEventListener() {
                 @Override
                 public void onMenuToggle(ArrayList<MenuButton> popUpMenu, int index) {
-                    if (index != -1)
-                        Toast.makeText(testlistactivity.this, popUpMenu.get(index).name + "", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(testlistactivity.this, index + "", Toast.LENGTH_SHORT).show();
+//                    if (index != -1)
+//                        Toast.makeText(testlistactivity.this, popUpMenu.get(index).name + "", Toast.LENGTH_SHORT).show();
+//                    else
+//                        Toast.makeText(testlistactivity.this, index + "", Toast.LENGTH_SHORT).show();
                 }
             });
             return convertView;

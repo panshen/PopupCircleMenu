@@ -16,12 +16,12 @@
         circlemenu:radius="90dp">
 
         <ImageView
+            android:src="@drawable/bg"
             android:id="@+id/iv"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_centerInParent="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg" />
+            android:scaleType="centerCrop" />
 
     </me.panshen.com.circlemenu.PPCircle>
 

@@ -7,12 +7,14 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -40,16 +42,14 @@ public class MenuButton extends View {
     ValueAnimator outanim = null;
 
     int mAnimDuration = 0;
-
     ValueAnimator animeExplode = null;
     Path pathExplode = new Path();
     PathMeasure pathMeasureExplode = new PathMeasure();
     boolean reverse = false;
-
+    boolean exploeded ;
     public Path getPathExplode() {
         if (pathExplode != null)
             pathExplode.reset();
-
         return pathExplode;
     }
 
@@ -126,17 +126,21 @@ public class MenuButton extends View {
             }
         });
 
+
+        margin = widthPx / 10;
+        circleRadius = widthPx / 2 - margin;
+
         mPaint.setAntiAlias(true);
         mPaint.setAlpha(mAlpha);
         mPaint.setStyle(Paint.Style.STROKE);
-
         mPaint.setColor(mColor);
+        mPaint.setStrokeWidth(margin / 2);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(widthPx, widthPx);
         setLayoutParams(layoutParams);
 
         if (mBitmap != null)
-            mBitmap = getScaledBitap();
+            mBitmap = Bitmap.createScaledBitmap(mBitmap, circleRadius, circleRadius, true);
     }
 
     @Override
@@ -148,13 +152,11 @@ public class MenuButton extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        widthPx = getMeasuredWidth();
-        margin = widthPx / 10;
-        circleRadius = widthPx / 2 - margin;
-        mPaint.setStrokeWidth(margin / 2);
+
         if (mBitmap == null) {
             mPaint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius, mPaint);
+
         } else {
             mPaint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius, mPaint);
@@ -185,9 +187,16 @@ public class MenuButton extends View {
 
                 float animalphaValue = Float.valueOf(animation.getAnimatedValue("anim_alpha") + "");
                 setAlpha(animalphaValue);
-
             }
         });
+        animeExplode.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                exploeded = true;
+            }
+        });
+
         animeExplode.start();
     }
 
@@ -199,6 +208,7 @@ public class MenuButton extends View {
             case MotionEvent.ACTION_DOWN:
                 setScaleX(1f);
                 setScaleY(1f);
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 int x = (int) event.getRawX();
@@ -222,6 +232,7 @@ public class MenuButton extends View {
                     reverse = true;
                     animeExplode.reverse();
                 }
+
                 break;
 
             default:
@@ -230,15 +241,7 @@ public class MenuButton extends View {
         return super.onTouchEvent(event);
     }
 
-    public Bitmap getScaledBitap() {
-        Matrix matrix = new Matrix();
-        matrix.postScale(0.4f, 0.4f);
-        Bitmap dstbmp = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(),
-                matrix, true);
-        return dstbmp;
-    }
-
-    enum BUTTON_STATE {
+    private enum BUTTON_STATE {
         NORMAL, BIG;
     }
 

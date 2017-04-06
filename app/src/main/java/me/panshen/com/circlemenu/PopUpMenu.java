@@ -29,9 +29,8 @@ public class PopUpMenu extends RelativeLayout {
     Point windowCenterPoint = null;
     ArrayList<MenuButton> bts = null;
     OverScreen enumOverScreen = OverScreen.NORMAL;
-    Paint mPaint = null;
     int selectedIndex = 0;
-    int rotate_rate = 0;
+
     public int getSelectedIndex() {
         return selectedIndex;
     }
@@ -65,11 +64,6 @@ public class PopUpMenu extends RelativeLayout {
             addView(mb);
         }
 
-        display.getMetrics(displayMetrics);
-        rotate_rate = displayMetrics.widthPixels/radius;
-
-        Log.e(TAG,"radius"+displayMetrics.widthPixels/radius+"");
-
     }
 
     public void resetCenter(Point point) {
@@ -90,14 +84,12 @@ public class PopUpMenu extends RelativeLayout {
         setPos(producePath(enumOverScreen));
 
         for (int i = 1; i < bts.size(); i++) {
-
             MenuButton v = bts.get(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
 
             Path path = v.getPathExplode();
             path.moveTo(point.x - v.getMeasuredWidth() / 2, point.y - v.getMeasuredHeight() / 2);
             path.lineTo(v.x, v.y);
-
             v.explode();
         }
 
@@ -201,14 +193,6 @@ public class PopUpMenu extends RelativeLayout {
             this.overScreenDistance = index;
         }
 
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
         public int getOverScreenDistance() {
             return overScreenDistance;
         }
@@ -216,40 +200,35 @@ public class PopUpMenu extends RelativeLayout {
         public void setOverScreenDistance(int overScreenDistance) {
             this.overScreenDistance = overScreenDistance;
         }
+    }
 
-        @Override
-        public String toString() {
-            return "OverScreen{" +
-                    "type='" + type + '\'' +
-                    ", overScreenDistance=" + overScreenDistance +
-                    '}';
-        }
+    public int px2dip(float pxValue) {
+        final float scale = getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
     }
 
     public Path producePath(OverScreen overScreen) {
-        Path orbit = new Path();
+        Path path = new Path();
         int start = 180;
-        int end = 360;
 
         int overdis = Math.abs(overScreen.getOverScreenDistance());
+        overdis = px2dip(overdis);
 
         switch (overScreen) {
+
             case LEFT:
-                start += overdis / rotate_rate;
-                end += overdis / rotate_rate;
+                start += overdis;
                 break;
 
             case RIGHT:
-                start -= overdis / rotate_rate;
-                end -= overdis / rotate_rate;
+                start -= overdis;
                 break;
 
             case NORMAL:
 
                 break;
         }
-        orbit.addArc(arcRange, start, end - start);
-
-        return orbit;
+        path.addArc(arcRange, start, 180);
+        return path;
     }
 }
