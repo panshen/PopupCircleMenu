@@ -13,7 +13,7 @@
         circlemenu:anim_duration="200"
         circlemenu:button_color="#ffffff"
         circlemenu:button_size="55dp"
-        circlemenu:radius="90dp">
+        circlemenu:radius="100dp">
 
         <ImageView
             android:src="@drawable/bg"

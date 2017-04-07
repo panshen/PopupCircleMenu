@@ -7,8 +7,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
@@ -46,7 +44,7 @@ public class MenuButton extends View {
     Path pathExplode = new Path();
     PathMeasure pathMeasureExplode = new PathMeasure();
     boolean reverse = false;
-    boolean exploeded ;
+
     public Path getPathExplode() {
         if (pathExplode != null)
             pathExplode.reset();
@@ -72,7 +70,20 @@ public class MenuButton extends View {
         init();
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        int Height = getHeight();
+
+        float r = (int) (Height / 2f / (float) (Math.PI));
+
+        Log.e("onSizeChanged","R"+r+"");
+        Log.e("onSizeChanged","widthPx"+""+widthPx);
+    }
+
     void init() {
+
         inanim = ValueAnimator.ofFloat(1.0f, 1.1f);
         inanim.setDuration(150);
         inanim.setInterpolator(new LinearInterpolator());
@@ -189,13 +200,6 @@ public class MenuButton extends View {
                 setAlpha(animalphaValue);
             }
         });
-        animeExplode.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                exploeded = true;
-            }
-        });
 
         animeExplode.start();
     }
@@ -208,7 +212,6 @@ public class MenuButton extends View {
             case MotionEvent.ACTION_DOWN:
                 setScaleX(1f);
                 setScaleY(1f);
-
                 break;
             case MotionEvent.ACTION_MOVE:
                 int x = (int) event.getRawX();
@@ -242,7 +245,7 @@ public class MenuButton extends View {
     }
 
     private enum BUTTON_STATE {
-        NORMAL, BIG;
+        NORMAL, BIG
     }
 
 }

@@ -15,7 +15,7 @@
         circlemenu:button_color="#ffffff"
         circlemenu:button_size="60dp"
         circlemenu:anim_duration="250"
-        circlemenu:radius="100dp">
+        circlemenu:radius="200dp">
 
         <ImageView
             android:layout_width="match_parent"
@@ -32,13 +32,5 @@
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
         android:src="@drawable/bg" />
-
-    <me.panshen.com.circlemenu.cccView
-        android:scaleType="centerCrop"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:src="@drawable/bg"
-        android:layout_width="160dp"
-        android:layout_height="160dp" />
 
 </RelativeLayout>

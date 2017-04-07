@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class PopUpMenu extends RelativeLayout {
     private String TAG = getClass().getName();
@@ -102,15 +103,16 @@ public class PopUpMenu extends RelativeLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         int action = ev.getAction();
-
+        ListIterator listIterator = bts.listIterator();
         switch (action) {
 
             case MotionEvent.ACTION_DOWN:
                 getDirection(ev);
 
-                for (final MenuButton mb : bts) {
-                    mb.dispatchTouchEvent(ev);
+                while (listIterator.hasNext()) {
+                    ((MenuButton) listIterator.next()).dispatchTouchEvent(ev);
                 }
+
                 return false;
             case MotionEvent.ACTION_MOVE:
                 for (int i = 1; i < bts.size(); i++) {
@@ -210,25 +212,34 @@ public class PopUpMenu extends RelativeLayout {
     public Path producePath(OverScreen overScreen) {
         Path path = new Path();
         int start = 180;
-
         int overdis = Math.abs(overScreen.getOverScreenDistance());
         overdis = px2dip(overdis);
+        int applydegree = 0;
 
         switch (overScreen) {
-
             case LEFT:
-                start += overdis;
-                break;
+                if (start + overdis > 270) {
+                    applydegree = 270;
+                } else {
+                    applydegree = start + overdis;
+                }
 
+                break;
             case RIGHT:
-                start -= overdis;
-                break;
+                if (start - overdis < 90) {
+                    applydegree = 90;
+                } else {
+                    applydegree = start - overdis;
+                }
 
+                break;
             case NORMAL:
+                applydegree = 180;
 
                 break;
         }
-        path.addArc(arcRange, start, 180);
+        path.addArc(arcRange, applydegree, 180);
+
         return path;
     }
 }
