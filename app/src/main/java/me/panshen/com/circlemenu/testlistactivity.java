@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -59,10 +61,19 @@ public class testlistactivity extends AppCompatActivity {
                 vh = new VH();
                 convertView = LayoutInflater.from(testlistactivity.this).inflate(R.layout.testitem, null);
                 vh.ppcircle = (PPCircle) convertView.findViewById(R.id.ppcircle);
+                vh.tv_1 = (ImageView) convertView.findViewById(R.id.iv_left);
                 convertView.setTag(vh);
             } else {
                 vh = (VH) convertView.getTag();
             }
+
+            vh.tv_1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(testlistactivity.this,"view",0).show();
+                }
+            });
+
             vh.ppcircle.setOnMenuEventListener(new PPCircle.OnMenuEventListener() {
                 @Override
                 public void onMenuToggle(ArrayList<MenuButton> popUpMenu, int index) {
@@ -76,7 +87,7 @@ public class testlistactivity extends AppCompatActivity {
         }
 
         class VH {
-            TextView tv_1;
+            ImageView tv_1;
             PPCircle ppcircle;
         }
     }

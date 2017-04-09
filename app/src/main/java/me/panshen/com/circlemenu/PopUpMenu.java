@@ -2,13 +2,11 @@ package me.panshen.com.circlemenu;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -29,8 +27,9 @@ public class PopUpMenu extends RelativeLayout {
     Rect btTempRect = null;
     Point windowCenterPoint = null;
     ArrayList<MenuButton> bts = null;
-    OverScreen enumOverScreen = OverScreen.NORMAL;
+    OverScreen enumOverScreen = OverScreen.TOP;
     int selectedIndex = 0;
+    int mOpenDriction = PPCircle.UNDEFIEN;
 
     public int getSelectedIndex() {
         return selectedIndex;
@@ -46,8 +45,6 @@ public class PopUpMenu extends RelativeLayout {
         setClickable(true);
         this.bts = bts;
         this.radius = radius;
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
 
         Display display = context.getWindow().getWindowManager().getDefaultDisplay();
         rectWindowRange = new Rect();
@@ -67,8 +64,9 @@ public class PopUpMenu extends RelativeLayout {
 
     }
 
-    public void resetCenter(Point point) {
+    public void resetCenter(Point point, int dirction) {
         this.point = point;
+        this.mOpenDriction = dirction;
         invalidate();
     }
 
@@ -76,13 +74,13 @@ public class PopUpMenu extends RelativeLayout {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         mask.setClickable(true);
         mask.setOnTouchListener(null);
-        View view = getChildAt(0);//layout mask
+        View view = getChildAt(0);
 
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         View centerButton = getChildAt(1);
         centerButton.layout(point.x - centerButton.getMeasuredWidth() / 2, point.y - centerButton.getMeasuredHeight() / 2, point.x + centerButton.getMeasuredWidth() / 2, point.y + centerButton.getMeasuredHeight() / 2);
 
-        setPos(producePath(enumOverScreen));
+        setPos(getPath());
 
         for (int i = 1; i < bts.size(); i++) {
             MenuButton v = bts.get(i);
@@ -93,22 +91,29 @@ public class PopUpMenu extends RelativeLayout {
             path.lineTo(v.x, v.y);
             v.explode();
         }
-
     }
 
     void updateMask(float f) {
         mask.setAlpha(f);
     }
 
+    Path getPath(){
+        if(mOpenDriction==PPCircle.UNDEFIEN){
+            return  producePath(enumOverScreen);
+        }else
+            return produceDriectPath();
+
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         int action = ev.getAction();
-        ListIterator listIterator = bts.listIterator();
+
         switch (action) {
 
             case MotionEvent.ACTION_DOWN:
                 getDirection(ev);
-
+                ListIterator listIterator = bts.listIterator();
                 while (listIterator.hasNext()) {
                     ((MenuButton) listIterator.next()).dispatchTouchEvent(ev);
                 }
@@ -151,7 +156,7 @@ public class PopUpMenu extends RelativeLayout {
         int overScreen = 0;
         arcRange = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
         int centerX = windowCenterPoint.x;
-        enumOverScreen = OverScreen.NORMAL;
+        enumOverScreen = OverScreen.TOP;
 
         if (x < centerX) {
             overScreen = (int) arcRange.left;
@@ -186,7 +191,7 @@ public class PopUpMenu extends RelativeLayout {
     }
 
     private enum OverScreen {
-        LEFT("LEFT", 0), RIGHT("RIGHT", 0), NORMAL("NORMAL", 0);
+        LEFT("LEFT", 0), RIGHT("RIGHT", 0), TOP("TOP", 0);
         private String type;
         private int overScreenDistance;
 
@@ -214,32 +219,46 @@ public class PopUpMenu extends RelativeLayout {
         int start = 180;
         int overdis = Math.abs(overScreen.getOverScreenDistance());
         overdis = px2dip(overdis);
-        int applydegree = 0;
+        int startDegree = 0;
 
         switch (overScreen) {
             case LEFT:
                 if (start + overdis > 270) {
-                    applydegree = 270;
+                    startDegree = 270;
                 } else {
-                    applydegree = start + overdis;
+                    startDegree = start + overdis;
                 }
 
                 break;
             case RIGHT:
                 if (start - overdis < 90) {
-                    applydegree = 90;
+                    startDegree = 90;
                 } else {
-                    applydegree = start - overdis;
+                    startDegree = start - overdis;
                 }
 
                 break;
-            case NORMAL:
-                applydegree = 180;
+            case TOP:
+                startDegree = 180;
 
                 break;
         }
-        path.addArc(arcRange, applydegree, 180);
 
+        path.addArc(arcRange, startDegree, 180);
+
+        return path;
+    }
+
+    Path produceDriectPath(){
+        Path path = new Path();
+        int startDegree = 0;
+        if(mOpenDriction==PPCircle.LEFT){
+            startDegree = 225;
+        }else if(mOpenDriction==PPCircle.RIGHT){
+            startDegree = 135;
+        }
+
+        path.addArc(arcRange, startDegree, 180);
         return path;
     }
 }

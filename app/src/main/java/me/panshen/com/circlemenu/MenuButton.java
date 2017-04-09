@@ -70,18 +70,6 @@ public class MenuButton extends View {
         init();
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-
-        int Height = getHeight();
-
-        float r = (int) (Height / 2f / (float) (Math.PI));
-
-        Log.e("onSizeChanged","R"+r+"");
-        Log.e("onSizeChanged","widthPx"+""+widthPx);
-    }
-
     void init() {
 
         inanim = ValueAnimator.ofFloat(1.0f, 1.1f);
