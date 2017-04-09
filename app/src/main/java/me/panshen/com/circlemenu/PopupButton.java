@@ -12,14 +12,13 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
 
 
-public class MenuButton extends View {
+public class PopupButton extends View {
     private final String TAG = this.getClass().getName();
     private int mAlpha = 0;
     private Bitmap mBitmap = null;
@@ -34,7 +33,7 @@ public class MenuButton extends View {
     boolean outanimating = false;
     boolean inanimating = false;
     BUTTON_STATE buttonState = BUTTON_STATE.NORMAL;
-    PopUpMenu popUpMenu = null;
+    Popup popUpMenu = null;
     String name = "";
     ValueAnimator inanim = null;
     ValueAnimator outanim = null;
@@ -51,7 +50,7 @@ public class MenuButton extends View {
         return pathExplode;
     }
 
-    public MenuButton(Context context, Bitmap img, String name, int px, int color, int anim_duration) {
+    public PopupButton(Context context, Bitmap img, String name, int px, int color, int anim_duration) {
         super(context);
         this.mBitmap = img;
         this.name = name;
@@ -61,7 +60,7 @@ public class MenuButton extends View {
         init();
     }
 
-    public MenuButton(Context context, String name, int px, int color, int anim_duration) {
+    public PopupButton(Context context, String name, int px, int color, int anim_duration) {
         super(context);
         this.name = name;
         this.widthPx = px;
@@ -145,7 +144,7 @@ public class MenuButton extends View {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        popUpMenu = (PopUpMenu) getParent();
+        popUpMenu = (Popup) getParent();
     }
 
     @Override
@@ -169,7 +168,7 @@ public class MenuButton extends View {
         pathMeasureExplode.setPath(pathExplode, false);
 
         PropertyValuesHolder propertyScaleAnim = PropertyValuesHolder.ofFloat("anim_scale", pathMeasureExplode.getLength(), 0f);
-        PropertyValuesHolder propertyAlphaAnim = PropertyValuesHolder.ofFloat("anim_alpha", 0.0f, 0.0f, 0.0f, 0.7f, 1.0f);
+        PropertyValuesHolder propertyAlphaAnim = PropertyValuesHolder.ofFloat("anim_alpha", 0.0f, 0.0f, 0.3f, 0.5f, 1.0f);
 
         animeExplode = ValueAnimator.ofPropertyValuesHolder(propertyScaleAnim, propertyAlphaAnim);
         animeExplode.setDuration(mAnimDuration);

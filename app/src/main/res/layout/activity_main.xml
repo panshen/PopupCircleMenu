@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="me.panshen.com.circlemenu.MainActivity">
 
-    <me.panshen.com.circlemenu.PPCircle
+    <me.panshen.com.circlemenu.PopupView
         android:id="@+id/ppcircle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
@@ -25,9 +25,9 @@
             android:layout_centerInParent="true"
             android:scaleType="centerCrop"
             android:src="@drawable/bg" />
-    </me.panshen.com.circlemenu.PPCircle>
+    </me.panshen.com.circlemenu.PopupView>
 
-    <me.panshen.com.circlemenu.PPCircle
+    <me.panshen.com.circlemenu.PopupView
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_width="200dp"
@@ -44,6 +44,6 @@
             android:layout_centerInParent="true"
             android:scaleType="centerCrop"
             android:src="@drawable/bg" />
-    </me.panshen.com.circlemenu.PPCircle>
+    </me.panshen.com.circlemenu.PopupView>
 
 </RelativeLayout>

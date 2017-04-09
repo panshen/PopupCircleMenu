@@ -6,14 +6,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -21,87 +19,90 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
-//自定义展开方向时 角度是固定的 中心也是固定的
-public class PPCircle extends RelativeLayout {
+public class PopupView extends RelativeLayout {
     private String TAG = getClass().getName();
     private Activity mContext;
-    PopUpMenu popUpMenu;
-    ViewGroup mDecorView;
-    RelativeLayout.LayoutParams layoutParams;
-    ArrayList<MenuButton> bts = new ArrayList<>();
-    int showDistance = 25;
-    Rect triggerRect = null;
+    private Popup mPopup;
+    private ViewGroup mDecorView;
+    private RelativeLayout.LayoutParams layoutParams;
+    private ArrayList<PopupButton> mButtons = new ArrayList<>();
+    private int triggerPx = 25;
+    private Rect triggerRect = null;
 
-    final int juageDispatch = 0;
-    final int fingerLeave = 1;
+    private final int juageDispatch = 0;
+    private final int fingerLeave = 1;
 
-    int currentX;
-    int currentY;
-    static boolean isshowing = false;
-    boolean ableToggle = false;
-    ValueAnimator alphaAnim = null;
-    OnMenuEventListener onMenuEventListener = null;
-    int btsize = 0;
-    int radius = 0;
-    int btbgcolor = 0;
-    int anim_duration = 250;
+    private int currentX;
+    private int currentY;
+    private static boolean isshowing = false;
+    private boolean ableToggle = false;
+    private ValueAnimator mAlphAnimator = null;
+    private OnMenuEventListener mOnMenuEventListener = null;
+    private int btsize = 0;
+    private int radius = 0;
+    private int btbgcolor = 0;
+    private  int mAnimDuration = 250;
     public static final int UNDEFIEN = -1;
     public static final int RIGHT = 2;
     public static final int LEFT = 1;
 
-    private Paint mPaint = new Paint();
-    boolean mIntercept = false;
-    public int OPEN_DRIECTION = -1;
+    public int OPEN_DRIECTION = UNDEFIEN;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
             if (msg.what == juageDispatch) {
-                if (ableToggle && popUpMenu.getVisibility() == INVISIBLE && !isshowing) {
+                if (ableToggle && mPopup.getVisibility() == INVISIBLE && !isshowing) {
                     MotionEvent newEv = (MotionEvent) msg.obj;
                     isshowing = true;
-                    alphaAnim.start();
-                    popUpMenu.setVisibility(VISIBLE);
-                    mDecorView.addView(popUpMenu, layoutParams);
+                    mAlphAnimator.start();
+                    mPopup.setVisibility(VISIBLE);
+                    mDecorView.addView(mPopup, layoutParams);
 
                     if (OPEN_DRIECTION != UNDEFIEN)
-                        popUpMenu.resetCenter(getViewCurrentCenter(), OPEN_DRIECTION);
+                        mPopup.resetCenter(getViewCurrentCenter(), OPEN_DRIECTION);
                     else
-                        popUpMenu.resetCenter(new Point((int) newEv.getRawX(), (int) newEv.getRawY()), OPEN_DRIECTION);
+                        mPopup.resetCenter(new Point((int) newEv.getRawX(), (int) newEv.getRawY()), OPEN_DRIECTION);
 
                     newEv.setAction(MotionEvent.ACTION_DOWN);
-                    popUpMenu.dispatchTouchEvent(newEv);
+                    mPopup.dispatchTouchEvent(newEv);
+
                     getParent().requestDisallowInterceptTouchEvent(true);
+
                 }
             } else if (msg.what == fingerLeave) {
-                popUpMenu.setVisibility(INVISIBLE);
-                mDecorView.removeView(popUpMenu);
+                mPopup.setVisibility(INVISIBLE);
+                mDecorView.removeView(mPopup);
                 isshowing = false;
                 ableToggle = false;
                 getParent().requestDisallowInterceptTouchEvent(false);
-                if (onMenuEventListener != null)
-                    onMenuEventListener.onMenuToggle(popUpMenu.bts, popUpMenu.getSelectedIndex());
+                if (juageCallback()) {
+                    mOnMenuEventListener.onMenuToggle(mPopup.bts, mPopup.getSelectedIndex());
+                }
             }
+
         }
     };
 
-    public void setOnMenuEventListener(OnMenuEventListener onMenuEventListener) {
-        this.onMenuEventListener = onMenuEventListener;
+    boolean juageCallback() {
+        return mOnMenuEventListener != null &&
+                mPopup.bts != null &&
+                mPopup.selectedIndex != -1 &&
+                mPopup.selectedIndex != 0 &&
+                mPopup.bts.size() > 0;
     }
 
-    public PPCircle(Context context, AttributeSet attrs) {
+    public void setmOnMenuEventListener(OnMenuEventListener mOnMenuEventListener) {
+        this.mOnMenuEventListener = mOnMenuEventListener;
+    }
+
+    public PopupView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = (Activity) context;
-        setClickable(true);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.circlemenu, 0, 0);
         int n = a.getIndexCount();
         initDefaultParam();
-
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setColor(Color.BLACK);
-        mPaint.setStrokeWidth(20);
 
         for (int i = 0; i < n; i++) {
             int attr = a.getIndex(i);
@@ -118,9 +119,8 @@ public class PPCircle extends RelativeLayout {
                             TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
                     break;
                 case R.styleable.circlemenu_anim_duration:
-                    anim_duration = a.getInt(attr, 200);
+                    mAnimDuration = a.getInt(attr, 200);
                     break;
-
                 case R.styleable.circlemenu_open_direction:
                     OPEN_DRIECTION = a.getInt(attr, -1);
                     break;
@@ -128,7 +128,7 @@ public class PPCircle extends RelativeLayout {
                     break;
             }
         }
-        initother();
+        init();
     }
 
     private Point getViewCurrentCenter() {
@@ -145,53 +145,52 @@ public class PPCircle extends RelativeLayout {
         btbgcolor = Color.WHITE;
     }
 
-    void initother() {
+    void init() {
         layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
 
-        bts.add(new MenuButton(mContext, "菜单", btsize, btbgcolor, anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), "--", btsize, btbgcolor, anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), "--", btsize, btbgcolor, anim_duration));
-        bts.add(new MenuButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), "--", btsize, btbgcolor, anim_duration));
+        mButtons.add(new PopupButton(mContext, "MENU", btsize, btbgcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), "EARPOD", btsize, btbgcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), "TV", btsize, btbgcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), "HEART", btsize, btbgcolor, mAnimDuration));
 
-        popUpMenu = new PopUpMenu(mContext, bts, radius);
-        popUpMenu.setVisibility(INVISIBLE);
-        alphaAnim = new ValueAnimator();
-        alphaAnim.setFloatValues(0.0f, 1.0f);
-        alphaAnim.setDuration(anim_duration);
-        alphaAnim.setInterpolator(new LinearOutSlowInInterpolator());
-        alphaAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        mPopup = new Popup(mContext, mButtons, radius);
+        mPopup.setVisibility(INVISIBLE);
+        mAlphAnimator = new ValueAnimator();
+        mAlphAnimator.setFloatValues(0.0f, 1.0f);
+        mAlphAnimator.setDuration(mAnimDuration);
+        mAlphAnimator.setInterpolator(new LinearOutSlowInInterpolator());
+        mAlphAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                popUpMenu.updateMask(Float.valueOf(animation.getAnimatedValue() + ""));
+                mPopup.updateMask(Float.valueOf(animation.getAnimatedValue() + ""));
             }
         });
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+
         int action = ev.getAction();
-        int downX;
-        int downY;
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e(TAG, "ACTION_DOWN");
+                int downX = (int) ev.getRawX();
+                int downY = (int) ev.getRawY();
 
                 if (isshowing) {
                     return false;
                 } else {
-                    downX = (int) ev.getRawX();
-                    downY = (int) ev.getRawY();
-                    triggerRect = new Rect(downX - showDistance, downY - showDistance, downX + showDistance, downY + showDistance);
+                    triggerRect = new Rect(downX - triggerPx, downY - triggerPx, downX + triggerPx, downY + triggerPx);
                     getParent().requestDisallowInterceptTouchEvent(true);
 
                     ableToggle = true;
                     Message msg = Message.obtain();
                     msg.obj = ev;
                     msg.what = juageDispatch;
-                    if (popUpMenu.getVisibility() == INVISIBLE)
-                        handler.sendMessageDelayed(msg, anim_duration);
+                    if (mPopup.getVisibility() == INVISIBLE) {
+                        handler.sendMessageDelayed(msg, mAnimDuration);
+                    }
 
                     return true;
                 }
@@ -200,16 +199,18 @@ public class PPCircle extends RelativeLayout {
                 currentY = (int) ev.getRawY();
 
                 if (triggerRect.contains(currentX, currentY)) {
-                    if (popUpMenu.getVisibility() == VISIBLE && isshowing)
-                        popUpMenu.dispatchTouchEvent(ev);
+                    if (mPopup.getVisibility() == VISIBLE && isshowing) {
+                        mPopup.dispatchTouchEvent(ev);
+                    }
 
                 } else {
-                    if (popUpMenu.getVisibility() == INVISIBLE) {
+                    if (mPopup.getVisibility() == INVISIBLE) {
                         ableToggle = false;
                         getParent().requestDisallowInterceptTouchEvent(false);
                     } else {
-                        popUpMenu.dispatchTouchEvent(ev);
+                        mPopup.dispatchTouchEvent(ev);
                     }
+
                 }
 
                 break;
@@ -221,47 +222,27 @@ public class PPCircle extends RelativeLayout {
                 break;
         }
 
-        return true;
-    }
-
-    //需要长按的事件 所以 长按了就拿走事件 如果就点了一下就松开了 就出传递给子类
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-
-        int action = ev.getAction();
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                mIntercept = false;
-                Log.e("onInterceptTouchEvent","ACTION_DOWN");
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.e("onInterceptTouchEvent","ACTION_MOVE");
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.e("onInterceptTouchEvent","ACTION_UP");
-                break;
-        }
-
-        return mIntercept;
+        return false;
     }
 
     interface OnMenuEventListener {
-        void onMenuToggle(ArrayList<MenuButton> popUpMenu, int index);
-
-//        void onMenuFouce(ArrayList<MenuButton> popUpMenu, int index);
+        void onMenuToggle(ArrayList<PopupButton> popUpMenu, int index);
     }
 
     void dismiss(MotionEvent ev) {
         isshowing = false;
-        if (popUpMenu.getVisibility() == VISIBLE) {
-            alphaAnim.reverse();
+        if (mPopup.getVisibility() == VISIBLE) {
+            mAlphAnimator.reverse();
             Message msg = Message.obtain();
             msg.obj = ev;
             msg.what = fingerLeave;
-            handler.sendMessageDelayed(msg, anim_duration);
-            popUpMenu.dispatchTouchEvent(ev);
+            handler.sendMessageDelayed(msg, mAnimDuration);
+            mPopup.dispatchTouchEvent(ev);
+
         } else {
+            if (mPopup.getVisibility() == INVISIBLE && getChildAt(0) != null && triggerRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                getChildAt(0).performClick();
+            }
             handler.removeCallbacksAndMessages(null);
         }
     }

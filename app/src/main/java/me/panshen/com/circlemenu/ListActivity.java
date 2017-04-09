@@ -11,12 +11,11 @@ import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class testlistactivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity {
     ListView lv;
     ArrayList<String> d = new ArrayList<>();
 
@@ -25,11 +24,7 @@ public class testlistactivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testlayout);
         lv = (ListView) findViewById(R.id.lv);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             d.add(i + "");
         }
 
@@ -59,9 +54,10 @@ public class testlistactivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 vh = new VH();
-                convertView = LayoutInflater.from(testlistactivity.this).inflate(R.layout.testitem, null);
-                vh.ppcircle = (PPCircle) convertView.findViewById(R.id.ppcircle);
+                convertView = LayoutInflater.from(ListActivity.this).inflate(R.layout.testitem, null);
+                vh.ppcircle = (PopupView) convertView.findViewById(R.id.ppcircle);
                 vh.tv_1 = (ImageView) convertView.findViewById(R.id.iv_left);
+                vh.iv = (ImageView) convertView.findViewById(R.id.iv);
                 convertView.setTag(vh);
             } else {
                 vh = (VH) convertView.getTag();
@@ -70,25 +66,28 @@ public class testlistactivity extends AppCompatActivity {
             vh.tv_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(testlistactivity.this,"view",0).show();
+                    Toast.makeText(ListActivity.this, "Menu click", 0).show();
                 }
             });
 
-            vh.ppcircle.setOnMenuEventListener(new PPCircle.OnMenuEventListener() {
+            vh.iv.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onMenuToggle(ArrayList<MenuButton> popUpMenu, int index) {
-//                    if (index != -1)
-//                        Toast.makeText(testlistactivity.this, popUpMenu.get(index).name + "", Toast.LENGTH_SHORT).show();
-//                    else
-//                        Toast.makeText(testlistactivity.this, index + "", Toast.LENGTH_SHORT).show();
+                public void onClick(View v) {
+                    Toast.makeText(ListActivity.this, "Img click", 0).show();
+                }
+            });
+            vh.ppcircle.setmOnMenuEventListener(new PopupView.OnMenuEventListener() {
+                @Override
+                public void onMenuToggle(ArrayList<PopupButton> mbs, int index) {
+                    Toast.makeText(ListActivity.this, mbs.get(index).name + "", Toast.LENGTH_SHORT).show();
                 }
             });
             return convertView;
         }
 
         class VH {
-            ImageView tv_1;
-            PPCircle ppcircle;
+            ImageView tv_1, iv;
+            PopupView ppcircle;
         }
     }
 }

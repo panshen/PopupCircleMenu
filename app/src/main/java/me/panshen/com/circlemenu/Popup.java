@@ -15,9 +15,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 
-public class PopUpMenu extends RelativeLayout {
+public class Popup extends RelativeLayout {
     private String TAG = getClass().getName();
     View mask = null;
     int radius = 250;
@@ -26,10 +25,10 @@ public class PopUpMenu extends RelativeLayout {
     Rect rectWindowRange = null;
     Rect btTempRect = null;
     Point windowCenterPoint = null;
-    ArrayList<MenuButton> bts = null;
+    ArrayList<PopupButton> bts = null;
     OverScreen enumOverScreen = OverScreen.TOP;
     int selectedIndex = 0;
-    int mOpenDriction = PPCircle.UNDEFIEN;
+    int mOpenDriction = PopupView.UNDEFIEN;
 
     public int getSelectedIndex() {
         return selectedIndex;
@@ -39,7 +38,7 @@ public class PopUpMenu extends RelativeLayout {
         this.selectedIndex = selectedIndex;
     }
 
-    public PopUpMenu(Activity context, ArrayList<MenuButton> bts, int radius) {
+    public Popup(Activity context, ArrayList<PopupButton> bts, int radius) {
         super(context);
         Log.e(TAG, "init");
         setClickable(true);
@@ -58,10 +57,9 @@ public class PopUpMenu extends RelativeLayout {
         mask.setLayoutParams(rl);
         addView(mask);
 
-        for (MenuButton mb : bts) {
+        for (PopupButton mb : bts) {
             addView(mb);
         }
-
     }
 
     public void resetCenter(Point point, int dirction) {
@@ -83,7 +81,7 @@ public class PopUpMenu extends RelativeLayout {
         setPos(getPath());
 
         for (int i = 1; i < bts.size(); i++) {
-            MenuButton v = bts.get(i);
+            PopupButton v = bts.get(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
 
             Path path = v.getPathExplode();
@@ -98,7 +96,7 @@ public class PopUpMenu extends RelativeLayout {
     }
 
     Path getPath(){
-        if(mOpenDriction==PPCircle.UNDEFIEN){
+        if(mOpenDriction== PopupView.UNDEFIEN){
             return  producePath(enumOverScreen);
         }else
             return produceDriectPath();
@@ -113,9 +111,8 @@ public class PopUpMenu extends RelativeLayout {
 
             case MotionEvent.ACTION_DOWN:
                 getDirection(ev);
-                ListIterator listIterator = bts.listIterator();
-                while (listIterator.hasNext()) {
-                    ((MenuButton) listIterator.next()).dispatchTouchEvent(ev);
+                for(PopupButton mb:bts){
+                 mb.dispatchTouchEvent(ev);
                 }
 
                 return false;
@@ -127,7 +124,7 @@ public class PopUpMenu extends RelativeLayout {
             case MotionEvent.ACTION_UP:
                 int x = (int) ev.getRawX();
                 int y = (int) ev.getRawY();
-                MenuButton mb;
+                PopupButton mb;
 
                 for (int i = 0; i < bts.size(); i++) {
                     bts.get(i).dispatchTouchEvent(ev);
@@ -147,6 +144,7 @@ public class PopUpMenu extends RelativeLayout {
             default:
                 break;
         }
+
         return false;
     }
 
@@ -167,8 +165,8 @@ public class PopUpMenu extends RelativeLayout {
             }
 
         } else {
-            arcRightXpos = (int) (arcRange.centerX() + radius);//圆的最大X位置
-            overScreen = arcRightXpos - rectWindowRange.width();//圆超出屏幕的像素
+            arcRightXpos = (int) (arcRange.centerX() + radius);
+            overScreen = arcRightXpos - rectWindowRange.width();
             if (arcRightXpos > rectWindowRange.width()) {
                 enumOverScreen = OverScreen.RIGHT;
                 enumOverScreen.setOverScreenDistance(overScreen);
@@ -252,9 +250,9 @@ public class PopUpMenu extends RelativeLayout {
     Path produceDriectPath(){
         Path path = new Path();
         int startDegree = 0;
-        if(mOpenDriction==PPCircle.LEFT){
+        if(mOpenDriction== PopupView.LEFT){
             startDegree = 225;
-        }else if(mOpenDriction==PPCircle.RIGHT){
+        }else if(mOpenDriction== PopupView.RIGHT){
             startDegree = 135;
         }
 
