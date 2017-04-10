@@ -1,13 +1,11 @@
 package me.panshen.com.circlemenu;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,12 +25,12 @@ public class ListActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             d.add(i + "");
         }
-
         lv.setAdapter(new adapter());
+
     }
 
     private class adapter extends BaseAdapter {
-
+        VH vh = null;
         @Override
         public int getCount() {
             return d.size();
@@ -47,8 +45,6 @@ public class ListActivity extends AppCompatActivity {
         public long getItemId(int position) {
             return position;
         }
-
-        VH vh;
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -76,6 +72,9 @@ public class ListActivity extends AppCompatActivity {
                     Toast.makeText(ListActivity.this, "Img click", 0).show();
                 }
             });
+
+            Integer[] drawables = {R.drawable.audio, R.drawable.display,R.drawable.heart};
+            vh.ppcircle.initRes(drawables);
             vh.ppcircle.setmOnMenuEventListener(new PopupView.OnMenuEventListener() {
                 @Override
                 public void onMenuToggle(ArrayList<PopupButton> mbs, int index) {

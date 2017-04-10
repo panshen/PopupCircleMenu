@@ -62,6 +62,17 @@ public class Popup extends RelativeLayout {
         }
     }
 
+    public void setbts(ArrayList<PopupButton> bts) {
+        this.bts.clear();
+        this.bts.addAll(bts);
+        Log.e("setbts", bts.size() + "");
+
+        removeViews(1, getChildCount()-1);
+        for (PopupButton mb : bts) {
+            addView(mb);
+        }
+    }
+
     public void resetCenter(Point point, int dirction) {
         this.point = point;
         this.mOpenDriction = dirction;
@@ -70,10 +81,8 @@ public class Popup extends RelativeLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        mask.setClickable(true);
-        mask.setOnTouchListener(null);
         View view = getChildAt(0);
-
+        Log.e("PopupButton.onLayout", getChildCount() + "");
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         View centerButton = getChildAt(1);
         centerButton.layout(point.x - centerButton.getMeasuredWidth() / 2, point.y - centerButton.getMeasuredHeight() / 2, point.x + centerButton.getMeasuredWidth() / 2, point.y + centerButton.getMeasuredHeight() / 2);
@@ -88,6 +97,7 @@ public class Popup extends RelativeLayout {
             path.moveTo(point.x - v.getMeasuredWidth() / 2, point.y - v.getMeasuredHeight() / 2);
             path.lineTo(v.x, v.y);
             v.explode();
+
         }
     }
 
@@ -95,10 +105,10 @@ public class Popup extends RelativeLayout {
         mask.setAlpha(f);
     }
 
-    Path getPath(){
-        if(mOpenDriction== PopupView.UNDEFIEN){
-            return  producePath(enumOverScreen);
-        }else
+    Path getPath() {
+        if (mOpenDriction == PopupView.UNDEFIEN) {
+            return producePath(enumOverScreen);
+        } else
             return produceDriectPath();
 
     }
@@ -111,8 +121,8 @@ public class Popup extends RelativeLayout {
 
             case MotionEvent.ACTION_DOWN:
                 getDirection(ev);
-                for(PopupButton mb:bts){
-                 mb.dispatchTouchEvent(ev);
+                for (PopupButton mb : bts) {
+                    mb.dispatchTouchEvent(ev);
                 }
 
                 return false;
@@ -247,12 +257,12 @@ public class Popup extends RelativeLayout {
         return path;
     }
 
-    Path produceDriectPath(){
+    Path produceDriectPath() {
         Path path = new Path();
         int startDegree = 0;
-        if(mOpenDriction== PopupView.LEFT){
+        if (mOpenDriction == PopupView.LEFT) {
             startDegree = 225;
-        }else if(mOpenDriction== PopupView.RIGHT){
+        } else if (mOpenDriction == PopupView.RIGHT) {
             startDegree = 135;
         }
 

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             circlemenu:anim_duration="200"
-            circlemenu:button_color="#ffffff"
+            circlemenu:button_color="#83b7c0"
             circlemenu:button_size="55dp"
             circlemenu:radius="100dp">
 
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_horizontal"
-            circlemenu:anim_duration="200"
+            circlemenu:anim_duration="300"
             circlemenu:button_color="#ffffff"
             circlemenu:button_size="55dp"
             circlemenu:open_direction="RIGHT"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_horizontal"
-            circlemenu:anim_duration="200"
+            circlemenu:anim_duration="400"
             circlemenu:button_color="#ffffff"
             circlemenu:button_size="55dp"
             circlemenu:open_direction="LEFT"

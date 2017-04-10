@@ -18,50 +18,52 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PopupView extends RelativeLayout {
     private String TAG = getClass().getName();
     private Activity mContext;
     private Popup mPopup;
+    private Rect mTriggerRect;
     private ViewGroup mDecorView;
-    private RelativeLayout.LayoutParams layoutParams;
+    private RelativeLayout.LayoutParams mLayoutParams;
     private ArrayList<PopupButton> mButtons = new ArrayList<>();
-    private int triggerPx = 25;
-    private Rect triggerRect = null;
+    private ValueAnimator mAlphAnimator;
+    private OnMenuEventListener mOnMenuEventListener;
 
-    private final int juageDispatch = 0;
-    private final int fingerLeave = 1;
+    private static boolean isshowing;
+    private static final int ACTION_DOWN = 0;
+    private static final int ACTION_UP = 1;
 
-    private int currentX;
-    private int currentY;
-    private static boolean isshowing = false;
-    private boolean ableToggle = false;
-    private ValueAnimator mAlphAnimator = null;
-    private OnMenuEventListener mOnMenuEventListener = null;
-    private int btsize = 0;
-    private int radius = 0;
-    private int btbgcolor = 0;
-    private  int mAnimDuration = 250;
     public static final int UNDEFIEN = -1;
     public static final int RIGHT = 2;
     public static final int LEFT = 1;
-
     public int OPEN_DRIECTION = UNDEFIEN;
+
+    private final int mTriggerPixle = 25;
+
+    private boolean mAbleToggle;
+
+    private int mBtsize = 0;
+    private int mRadius = 0;
+    private int mBtbackcolor = 0;
+    private int mAnimDuration = 250;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == juageDispatch) {
-                if (ableToggle && mPopup.getVisibility() == INVISIBLE && !isshowing) {
+            if (msg.what == ACTION_DOWN) {
+                if (mAbleToggle && mPopup.getVisibility() == INVISIBLE && !isshowing) {
                     MotionEvent newEv = (MotionEvent) msg.obj;
                     isshowing = true;
                     mAlphAnimator.start();
                     mPopup.setVisibility(VISIBLE);
-                    mDecorView.addView(mPopup, layoutParams);
+                    mDecorView.addView(mPopup, mLayoutParams);
 
                     if (OPEN_DRIECTION != UNDEFIEN)
-                        mPopup.resetCenter(getViewCurrentCenter(), OPEN_DRIECTION);
+                        mPopup.resetCenter(getViewCenterPoint(), OPEN_DRIECTION);
                     else
                         mPopup.resetCenter(new Point((int) newEv.getRawX(), (int) newEv.getRawY()), OPEN_DRIECTION);
 
@@ -71,11 +73,11 @@ public class PopupView extends RelativeLayout {
                     getParent().requestDisallowInterceptTouchEvent(true);
 
                 }
-            } else if (msg.what == fingerLeave) {
+            } else if (msg.what == ACTION_UP) {
                 mPopup.setVisibility(INVISIBLE);
                 mDecorView.removeView(mPopup);
                 isshowing = false;
-                ableToggle = false;
+                mAbleToggle = false;
                 getParent().requestDisallowInterceptTouchEvent(false);
                 if (juageCallback()) {
                     mOnMenuEventListener.onMenuToggle(mPopup.bts, mPopup.getSelectedIndex());
@@ -97,6 +99,18 @@ public class PopupView extends RelativeLayout {
         this.mOnMenuEventListener = mOnMenuEventListener;
     }
 
+    public void initRes(Integer... res) {
+        ArrayList<PopupButton> mbuttons = new ArrayList<>();
+
+        mbuttons.add(new PopupButton(mContext, "---", mBtsize, mBtbackcolor, mAnimDuration));
+        mbuttons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), "---", mBtsize, mBtbackcolor, mAnimDuration));
+        mbuttons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), "---", mBtsize, mBtbackcolor, mAnimDuration));
+        mbuttons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), "---", mBtsize, mBtbackcolor, mAnimDuration));
+
+        mPopup.setbts(mbuttons);
+
+    }
+
     public PopupView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = (Activity) context;
@@ -108,21 +122,21 @@ public class PopupView extends RelativeLayout {
             int attr = a.getIndex(i);
             switch (attr) {
                 case R.styleable.circlemenu_button_color:
-                    btbgcolor = a.getColor(attr, Color.WHITE);
+                    mBtbackcolor = a.getColor(attr, Color.WHITE);
                     break;
                 case R.styleable.circlemenu_button_size:
-                    btsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
+                    mBtsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_SP, 40, getResources().getDisplayMetrics()));
                     break;
                 case R.styleable.circlemenu_radius:
-                    radius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
+                    mRadius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
                     break;
                 case R.styleable.circlemenu_anim_duration:
-                    mAnimDuration = a.getInt(attr, 200);
+                    mAnimDuration = a.getInt(attr, 250);
                     break;
                 case R.styleable.circlemenu_open_direction:
-                    OPEN_DRIECTION = a.getInt(attr, -1);
+                    OPEN_DRIECTION = a.getInt(attr, UNDEFIEN);
                     break;
                 default:
                     break;
@@ -131,7 +145,7 @@ public class PopupView extends RelativeLayout {
         init();
     }
 
-    private Point getViewCurrentCenter() {
+    private Point getViewCenterPoint() {
         Rect r = new Rect();
         Point p = new Point();
         getGlobalVisibleRect(r);
@@ -140,21 +154,20 @@ public class PopupView extends RelativeLayout {
     }
 
     void initDefaultParam() {
-        btsize = getResources().getDimensionPixelSize(R.dimen.default_busize);
-        radius = getResources().getDimensionPixelSize(R.dimen.default_radius);
-        btbgcolor = Color.WHITE;
+        mBtsize = getResources().getDimensionPixelSize(R.dimen.default_busize);
+        mRadius = getResources().getDimensionPixelSize(R.dimen.default_radius);
+        mBtbackcolor = Color.WHITE;
     }
 
     void init() {
-        layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
+        mButtons.add(new PopupButton(mContext, "---", mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), "---", mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), "---", mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), "---", mBtsize, mBtbackcolor, mAnimDuration));
 
-        mButtons.add(new PopupButton(mContext, "MENU", btsize, btbgcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), "EARPOD", btsize, btbgcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), "TV", btsize, btbgcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), "HEART", btsize, btbgcolor, mAnimDuration));
-
-        mPopup = new Popup(mContext, mButtons, radius);
+        mPopup = new Popup(mContext, mButtons, mRadius);
         mPopup.setVisibility(INVISIBLE);
         mAlphAnimator = new ValueAnimator();
         mAlphAnimator.setFloatValues(0.0f, 1.0f);
@@ -166,6 +179,7 @@ public class PopupView extends RelativeLayout {
                 mPopup.updateMask(Float.valueOf(animation.getAnimatedValue() + ""));
             }
         });
+
     }
 
     @Override
@@ -181,13 +195,13 @@ public class PopupView extends RelativeLayout {
                 if (isshowing) {
                     return false;
                 } else {
-                    triggerRect = new Rect(downX - triggerPx, downY - triggerPx, downX + triggerPx, downY + triggerPx);
+                    mTriggerRect = new Rect(downX - mTriggerPixle, downY - mTriggerPixle, downX + mTriggerPixle, downY + mTriggerPixle);
                     getParent().requestDisallowInterceptTouchEvent(true);
 
-                    ableToggle = true;
+                    mAbleToggle = true;
                     Message msg = Message.obtain();
                     msg.obj = ev;
-                    msg.what = juageDispatch;
+                    msg.what = ACTION_DOWN;
                     if (mPopup.getVisibility() == INVISIBLE) {
                         handler.sendMessageDelayed(msg, mAnimDuration);
                     }
@@ -195,17 +209,17 @@ public class PopupView extends RelativeLayout {
                     return true;
                 }
             case MotionEvent.ACTION_MOVE:
-                currentX = (int) ev.getRawX();
-                currentY = (int) ev.getRawY();
+                int mCurrentX = (int) ev.getRawX();
+                int mCurrentY = (int) ev.getRawY();
 
-                if (triggerRect.contains(currentX, currentY)) {
+                if (mTriggerRect.contains(mCurrentX, mCurrentY)) {
                     if (mPopup.getVisibility() == VISIBLE && isshowing) {
                         mPopup.dispatchTouchEvent(ev);
                     }
 
                 } else {
                     if (mPopup.getVisibility() == INVISIBLE) {
-                        ableToggle = false;
+                        mAbleToggle = false;
                         getParent().requestDisallowInterceptTouchEvent(false);
                     } else {
                         mPopup.dispatchTouchEvent(ev);
@@ -235,12 +249,12 @@ public class PopupView extends RelativeLayout {
             mAlphAnimator.reverse();
             Message msg = Message.obtain();
             msg.obj = ev;
-            msg.what = fingerLeave;
+            msg.what = ACTION_UP;
             handler.sendMessageDelayed(msg, mAnimDuration);
             mPopup.dispatchTouchEvent(ev);
 
         } else {
-            if (mPopup.getVisibility() == INVISIBLE && getChildAt(0) != null && triggerRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+            if (mPopup.getVisibility() == INVISIBLE && getChildAt(0) != null && mTriggerRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
                 getChildAt(0).performClick();
             }
             handler.removeCallbacksAndMessages(null);
