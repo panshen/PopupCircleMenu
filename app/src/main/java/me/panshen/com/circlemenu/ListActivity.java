@@ -15,30 +15,28 @@ import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity {
     ListView lv;
-    ArrayList<String> d = new ArrayList<>();
-
+    ArrayList<String> list = new ArrayList<>();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testlayout);
         lv = (ListView) findViewById(R.id.lv);
         for (int i = 0; i < 10; i++) {
-            d.add(i + "");
+            list.add(i + "");
         }
         lv.setAdapter(new adapter());
-
     }
 
     private class adapter extends BaseAdapter {
         VH vh = null;
         @Override
         public int getCount() {
-            return d.size();
+            return list.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return d.get(position);
+            return list.get(position);
         }
 
         @Override
@@ -62,14 +60,14 @@ public class ListActivity extends AppCompatActivity {
             vh.tv_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ListActivity.this, "Menu click", 0).show();
+                    Toast.makeText(ListActivity.this, "Menu click",  Toast.LENGTH_SHORT).show();
                 }
             });
 
             vh.iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ListActivity.this, "Img click", 0).show();
+                    Toast.makeText(ListActivity.this, "Image click", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -77,10 +75,17 @@ public class ListActivity extends AppCompatActivity {
             vh.ppcircle.initRes(drawables);
             vh.ppcircle.setmOnMenuEventListener(new PopupView.OnMenuEventListener() {
                 @Override
-                public void onMenuToggle(ArrayList<PopupButton> mbs, int index) {
-                    Toast.makeText(ListActivity.this, mbs.get(index).name + "", Toast.LENGTH_SHORT).show();
+                public void onMenuToggle(PopupButton pb, int index) {
+                    if(index==1){
+                        Toast.makeText(ListActivity.this, "HEADSET", Toast.LENGTH_SHORT).show();
+                    }else if(index==2){
+                        Toast.makeText(ListActivity.this, "TV", Toast.LENGTH_SHORT).show();
+                    }else if(index==3){
+                        Toast.makeText(ListActivity.this, "HEART", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
+
             return convertView;
         }
 

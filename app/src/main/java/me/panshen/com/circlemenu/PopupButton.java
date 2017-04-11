@@ -24,46 +24,41 @@ public class PopupButton extends View {
     private Bitmap mBitmap = null;
     private int mColor = 0;
     private Paint mPaint = new Paint();
-    private int widthPx = 170;
-    private int margin = 20;
-    private int circleRadius = 0;
+    private int mWidth = 170;
+    private int mMargin = 20;
+    private int mCircleRadius = 0;
     public int x = 0;
     public int y = 0;
-    Rect rect = new Rect();
-    boolean outanimating = false;
-    boolean inanimating = false;
-    BUTTON_STATE buttonState = BUTTON_STATE.NORMAL;
-    Popup popUpMenu = null;
-    String name = "";
-    ValueAnimator inanim = null;
-    ValueAnimator outanim = null;
+    private Rect mRect = new Rect();
+    private boolean outanimating = false;
+    private boolean inanimating = false;
+    private BUTTON_STATE mButtonState = BUTTON_STATE.NORMAL;
+    private ValueAnimator inanim = null;
+    private ValueAnimator outanim = null;
 
-    int mAnimDuration = 0;
-    ValueAnimator animeExplode = null;
-    Path pathExplode = new Path();
-    PathMeasure pathMeasureExplode = new PathMeasure();
-    boolean reverse = false;
+    private int mAnimDuration = 0;
+    private ValueAnimator mAnimeExplode = null;
+    private Path mPathExplode = new Path();
+    private PathMeasure mPathMeasureExplode = new PathMeasure();
 
-    public Path getPathExplode() {
-        if (pathExplode != null)
-            pathExplode.reset();
-        return pathExplode;
+    public Path getmPathExplode() {
+        if (mPathExplode != null)
+            mPathExplode.reset();
+        return mPathExplode;
     }
 
-    public PopupButton(Context context, Bitmap img, String name, int px, int color, int anim_duration) {
+    public PopupButton(Context context, Bitmap img, int px, int color, int anim_duration) {
         super(context);
         this.mBitmap = img;
-        this.name = name;
-        this.widthPx = px;
+        this.mWidth = px;
         this.mColor = color;
-        mAnimDuration = anim_duration;
+        this.mAnimDuration = anim_duration;
         init();
     }
 
-    public PopupButton(Context context, String name, int px, int color, int anim_duration) {
+    public PopupButton(Context context, int px, int color, int anim_duration) {
         super(context);
-        this.name = name;
-        this.widthPx = px;
+        this.mWidth = px;
         this.mColor = color;
         this.mAnimDuration = anim_duration;
         init();
@@ -93,7 +88,7 @@ public class PopupButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 inanimating = true;
-                buttonState = BUTTON_STATE.BIG;
+                mButtonState = BUTTON_STATE.BIG;
             }
         });
 
@@ -114,7 +109,7 @@ public class PopupButton extends View {
                 super.onAnimationEnd(animation);
                 outanimating = false;
                 inanimating = false;
-                buttonState = BUTTON_STATE.NORMAL;
+                mButtonState = BUTTON_STATE.NORMAL;
             }
 
             @Override
@@ -124,27 +119,20 @@ public class PopupButton extends View {
             }
         });
 
-
-        margin = widthPx / 10;
-        circleRadius = widthPx / 2 - margin;
+        mMargin = mWidth / 10;
+        mCircleRadius = mWidth / 2 - mMargin;
 
         mPaint.setAntiAlias(true);
         mPaint.setAlpha(mAlpha);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(mColor);
-        mPaint.setStrokeWidth(margin / 2);
+        mPaint.setStrokeWidth(mMargin / 2);
 
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(widthPx, widthPx);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(mWidth, mWidth);
         setLayoutParams(layoutParams);
 
         if (mBitmap != null)
-            mBitmap = Bitmap.createScaledBitmap(mBitmap, circleRadius, circleRadius, true);
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        popUpMenu = (Popup) getParent();
+            mBitmap = Bitmap.createScaledBitmap(mBitmap, mCircleRadius, mCircleRadius, true);
     }
 
     @Override
@@ -153,33 +141,32 @@ public class PopupButton extends View {
 
         if (mBitmap == null) {
             mPaint.setStyle(Paint.Style.STROKE);
-            canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius, mPaint);
+            canvas.drawCircle(mWidth / 2, mWidth / 2, mCircleRadius, mPaint);
 
         } else {
             mPaint.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(widthPx / 2, widthPx / 2, circleRadius, mPaint);
-            canvas.drawBitmap(mBitmap, circleRadius + margin - mBitmap.getWidth() / 2, circleRadius + margin - mBitmap.getHeight() / 2, mPaint);
+            canvas.drawCircle(mWidth / 2, mWidth / 2, mCircleRadius, mPaint);
+            canvas.drawBitmap(mBitmap, mCircleRadius + mMargin - mBitmap.getWidth() / 2, mCircleRadius + mMargin - mBitmap.getHeight() / 2, mPaint);
         }
 
     }
 
     void explode() {
-        reverse = false;
-        pathMeasureExplode.setPath(pathExplode, false);
+        mPathMeasureExplode.setPath(mPathExplode, false);
 
-        PropertyValuesHolder propertyScaleAnim = PropertyValuesHolder.ofFloat("anim_scale", pathMeasureExplode.getLength(), 0f);
+        PropertyValuesHolder propertyScaleAnim = PropertyValuesHolder.ofFloat("anim_scale", mPathMeasureExplode.getLength(), 0f);
         PropertyValuesHolder propertyAlphaAnim = PropertyValuesHolder.ofFloat("anim_alpha", 0.0f, 0.0f, 0.3f, 0.5f, 1.0f);
 
-        animeExplode = ValueAnimator.ofPropertyValuesHolder(propertyScaleAnim, propertyAlphaAnim);
-        animeExplode.setDuration(mAnimDuration);
-        animeExplode.setInterpolator(new LinearOutSlowInInterpolator());
-        animeExplode.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        mAnimeExplode = ValueAnimator.ofPropertyValuesHolder(propertyScaleAnim, propertyAlphaAnim);
+        mAnimeExplode.setDuration(mAnimDuration);
+        mAnimeExplode.setInterpolator(new LinearOutSlowInInterpolator());
+        mAnimeExplode.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float[] pos = {0, 0};
                 float animscaledValue = Float.valueOf(animation.getAnimatedValue("anim_scale") + "");
-                float currentDis = pathMeasureExplode.getLength() - animscaledValue;
-                pathMeasureExplode.getPosTan(currentDis, pos, null);
+                float currentDis = mPathMeasureExplode.getLength() - animscaledValue;
+                mPathMeasureExplode.getPosTan(currentDis, pos, null);
                 setX(pos[0]);
                 setY(pos[1]);
 
@@ -188,7 +175,7 @@ public class PopupButton extends View {
             }
         });
 
-        animeExplode.start();
+        mAnimeExplode.start();
     }
 
     @Override
@@ -203,28 +190,25 @@ public class PopupButton extends View {
             case MotionEvent.ACTION_MOVE:
                 int x = (int) event.getRawX();
                 int y = (int) event.getRawY();
-                getHitRect(rect);
-                if (rect.contains(x, y)) {
-                    if (buttonState.equals(BUTTON_STATE.NORMAL) && !inanimating) {
+                getHitRect(mRect);
+                if (mRect.contains(x, y)) {
+                    if (mButtonState.equals(BUTTON_STATE.NORMAL) && !inanimating) {
                         inanim.start();
                     }
-                } else if (buttonState.equals(BUTTON_STATE.BIG) && !outanimating && !inanimating) {
+                } else if (mButtonState.equals(BUTTON_STATE.BIG) && !outanimating && !inanimating) {
                     outanim.start();
                 }
                 break;
-
             case MotionEvent.ACTION_UP:
                 outanimating = false;
                 inanimating = false;
-                buttonState = BUTTON_STATE.NORMAL;
+                mButtonState = BUTTON_STATE.NORMAL;
 
-                if (animeExplode != null && pathMeasureExplode != null && pathExplode != null) {
-                    reverse = true;
-                    animeExplode.reverse();
+                if (mAnimeExplode != null && mPathMeasureExplode != null && mPathExplode != null) {
+                    mAnimeExplode.reverse();
                 }
 
                 break;
-
             default:
                 break;
         }

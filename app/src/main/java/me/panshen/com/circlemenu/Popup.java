@@ -7,7 +7,6 @@ import android.graphics.PathMeasure;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,44 +17,42 @@ import java.util.ArrayList;
 
 public class Popup extends RelativeLayout {
     private String TAG = getClass().getName();
-    View mask = null;
-    int radius = 250;
-    Point point = null;
-    RectF arcRange = null;
-    Rect rectWindowRange = null;
-    Rect btTempRect = null;
-    Point windowCenterPoint = null;
-    ArrayList<PopupButton> bts = null;
-    OverScreen enumOverScreen = OverScreen.TOP;
-    int selectedIndex = 0;
-    int mOpenDriction = PopupView.UNDEFIEN;
+    private View mShadowView;
+    private int mRadius = 250;
+    private Point mPoint;
+    private RectF mArcRange;
+    private Rect mRectWindowRange;
+    private Rect btTempRect;
+    private Point mWindowCenterPoint;
+    public ArrayList<PopupButton> bts;
+    public int mSelectedIndex = 0;
+    private OverScreen mEnumOverScreen = OverScreen.TOP;
+    private int mOpenDriction = PopupView.UNDEFIEN;
 
-    public int getSelectedIndex() {
-        return selectedIndex;
+    public int getmSelectedIndex() {
+        return mSelectedIndex;
     }
 
-    public void setSelectedIndex(int selectedIndex) {
-        this.selectedIndex = selectedIndex;
+    public void setmSelectedIndex(int mSelectedIndex) {
+        this.mSelectedIndex = mSelectedIndex;
     }
 
     public Popup(Activity context, ArrayList<PopupButton> bts, int radius) {
         super(context);
-        Log.e(TAG, "init");
-        setClickable(true);
         this.bts = bts;
-        this.radius = radius;
+        mRadius = radius;
 
         Display display = context.getWindow().getWindowManager().getDefaultDisplay();
-        rectWindowRange = new Rect();
+        mRectWindowRange = new Rect();
         btTempRect = new Rect();
-        display.getRectSize(rectWindowRange);
-        windowCenterPoint = new Point(rectWindowRange.centerX(), rectWindowRange.centerY());
+        display.getRectSize(mRectWindowRange);
+        mWindowCenterPoint = new Point(mRectWindowRange.centerX(), mRectWindowRange.centerY());
 
         RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mask = new View(context);
-        mask.setBackgroundColor(Color.parseColor("#66000000"));
-        mask.setLayoutParams(rl);
-        addView(mask);
+        mShadowView = new View(context);
+        mShadowView.setBackgroundColor(Color.parseColor("#66000000"));
+        mShadowView.setLayoutParams(rl);
+        addView(mShadowView);
 
         for (PopupButton mb : bts) {
             addView(mb);
@@ -65,16 +62,15 @@ public class Popup extends RelativeLayout {
     public void setbts(ArrayList<PopupButton> bts) {
         this.bts.clear();
         this.bts.addAll(bts);
-        Log.e("setbts", bts.size() + "");
 
-        removeViews(1, getChildCount()-1);
+        removeViews(1, getChildCount() - 1);
         for (PopupButton mb : bts) {
             addView(mb);
         }
     }
 
     public void resetCenter(Point point, int dirction) {
-        this.point = point;
+        this.mPoint = point;
         this.mOpenDriction = dirction;
         invalidate();
     }
@@ -82,10 +78,9 @@ public class Popup extends RelativeLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         View view = getChildAt(0);
-        Log.e("PopupButton.onLayout", getChildCount() + "");
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         View centerButton = getChildAt(1);
-        centerButton.layout(point.x - centerButton.getMeasuredWidth() / 2, point.y - centerButton.getMeasuredHeight() / 2, point.x + centerButton.getMeasuredWidth() / 2, point.y + centerButton.getMeasuredHeight() / 2);
+        centerButton.layout(mPoint.x - centerButton.getMeasuredWidth() / 2, mPoint.y - centerButton.getMeasuredHeight() / 2, mPoint.x + centerButton.getMeasuredWidth() / 2, mPoint.y + centerButton.getMeasuredHeight() / 2);
 
         setPos(getPath());
 
@@ -93,24 +88,23 @@ public class Popup extends RelativeLayout {
             PopupButton v = bts.get(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
 
-            Path path = v.getPathExplode();
-            path.moveTo(point.x - v.getMeasuredWidth() / 2, point.y - v.getMeasuredHeight() / 2);
+            Path path = v.getmPathExplode();
+            path.moveTo(mPoint.x - v.getMeasuredWidth() / 2, mPoint.y - v.getMeasuredHeight() / 2);
             path.lineTo(v.x, v.y);
             v.explode();
-
         }
+
     }
 
     void updateMask(float f) {
-        mask.setAlpha(f);
+        mShadowView.setAlpha(f);
     }
 
-    Path getPath() {
+    private Path getPath() {
         if (mOpenDriction == PopupView.UNDEFIEN) {
-            return producePath(enumOverScreen);
+            return producePath(mEnumOverScreen);
         } else
-            return produceDriectPath();
-
+            return genDriectPath();
     }
 
     @Override
@@ -144,9 +138,9 @@ public class Popup extends RelativeLayout {
                     mb = bts.get(i);
                     mb.getHitRect(btTempRect);
                     if (btTempRect.contains(x, y)) {
-                        setSelectedIndex(i);
+                        setmSelectedIndex(i);
                         break;
-                    } else setSelectedIndex(-1);
+                    } else setmSelectedIndex(-1);
                 }
 
                 return false;
@@ -158,33 +152,33 @@ public class Popup extends RelativeLayout {
         return false;
     }
 
-    public void getDirection(MotionEvent ev) {
+    private void getDirection(MotionEvent ev) {
         int x = (int) ev.getRawX();
         int arcRightXpos = 0;
         int overScreen = 0;
-        arcRange = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
-        int centerX = windowCenterPoint.x;
-        enumOverScreen = OverScreen.TOP;
+        mArcRange = new RectF(mPoint.x - mRadius, mPoint.y - mRadius, mPoint.x + mRadius, mPoint.y + mRadius);
+        int centerX = mWindowCenterPoint.x;
+        mEnumOverScreen = OverScreen.TOP;
 
         if (x < centerX) {
-            overScreen = (int) arcRange.left;
+            overScreen = (int) mArcRange.left;
 
             if (overScreen < 0) {
-                enumOverScreen = OverScreen.LEFT;
-                enumOverScreen.setOverScreenDistance(overScreen);
+                mEnumOverScreen = OverScreen.LEFT;
+                mEnumOverScreen.setOverScreenDistance(overScreen);
             }
 
         } else {
-            arcRightXpos = (int) (arcRange.centerX() + radius);
-            overScreen = arcRightXpos - rectWindowRange.width();
-            if (arcRightXpos > rectWindowRange.width()) {
-                enumOverScreen = OverScreen.RIGHT;
-                enumOverScreen.setOverScreenDistance(overScreen);
+            arcRightXpos = (int) (mArcRange.centerX() + mRadius);
+            overScreen = arcRightXpos - mRectWindowRange.width();
+            if (arcRightXpos > mRectWindowRange.width()) {
+                mEnumOverScreen = OverScreen.RIGHT;
+                mEnumOverScreen.setOverScreenDistance(overScreen);
             }
         }
     }
 
-    public void setPos(Path orbit) {
+    private void setPos(Path orbit) {
         PathMeasure measure = new PathMeasure(orbit, false);
         int divisor = bts.size();
         for (int i = 1; i < bts.size(); i++) {
@@ -217,12 +211,12 @@ public class Popup extends RelativeLayout {
         }
     }
 
-    public int px2dip(float pxValue) {
+    private int px2dip(float pxValue) {
         final float scale = getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
 
-    public Path producePath(OverScreen overScreen) {
+    private Path producePath(OverScreen overScreen) {
         Path path = new Path();
         int start = 180;
         int overdis = Math.abs(overScreen.getOverScreenDistance());
@@ -248,16 +242,14 @@ public class Popup extends RelativeLayout {
                 break;
             case TOP:
                 startDegree = 180;
-
                 break;
         }
 
-        path.addArc(arcRange, startDegree, 180);
-
+        path.addArc(mArcRange, startDegree, 180);
         return path;
     }
 
-    Path produceDriectPath() {
+    private Path genDriectPath() {
         Path path = new Path();
         int startDegree = 0;
         if (mOpenDriction == PopupView.LEFT) {
@@ -265,8 +257,7 @@ public class Popup extends RelativeLayout {
         } else if (mOpenDriction == PopupView.RIGHT) {
             startDegree = 135;
         }
-
-        path.addArc(arcRange, startDegree, 180);
+        path.addArc(mArcRange, startDegree, 180);
         return path;
     }
 }

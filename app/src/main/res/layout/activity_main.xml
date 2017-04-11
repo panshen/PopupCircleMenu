@@ -20,6 +20,7 @@
         circlemenu:radius="100dp">
 
         <ImageView
+            android:id="@+id/iv_bottom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
@@ -39,6 +40,7 @@
         circlemenu:radius="100dp">
 
         <ImageView
+            android:id="@+id/iv_up"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"

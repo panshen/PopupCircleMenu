@@ -28,15 +28,17 @@
                 android:layout_centerInParent="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg" />
+
         </me.panshen.com.circlemenu.PopupView>
+
     </android.support.v7.widget.CardView>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_gravity="bottom">
+        android:layout_marginRight="5dp">
 
         <me.panshen.com.circlemenu.PopupView
             android:id="@+id/ppcircle"
@@ -44,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_horizontal"
-            circlemenu:anim_duration="300"
+            circlemenu:anim_duration="200"
             circlemenu:button_color="#ffffff"
             circlemenu:button_size="55dp"
             circlemenu:open_direction="RIGHT"
@@ -63,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_horizontal"
-            circlemenu:anim_duration="400"
+            circlemenu:anim_duration="200"
             circlemenu:button_color="#ffffff"
             circlemenu:button_size="55dp"
             circlemenu:open_direction="LEFT"
@@ -74,6 +76,7 @@
                 android:layout_height="35dp"
                 android:padding="7dp"
                 android:src="@drawable/dots" />
+
         </me.panshen.com.circlemenu.PopupView>
     </RelativeLayout>
 </LinearLayout>
