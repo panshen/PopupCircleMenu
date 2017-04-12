@@ -7,15 +7,15 @@
     android:layout_height="match_parent"
     tools:context="me.panshen.com.circlemenu.MainActivity">
 
-    <me.panshen.com.circlemenu.PopupView
-        android:id="@+id/ppcircle"
+    <me.panshen.com.circlemenu.PopupCircleView
+        android:id="@+id/PopupMenu2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         circlemenu:button_color="#ffffff"
-        circlemenu:button_size="60dp"
+        circlemenu:button_size="55dp"
         circlemenu:anim_duration="250"
         circlemenu:radius="100dp">
 
@@ -26,16 +26,16 @@
             android:layout_centerInParent="true"
             android:scaleType="centerCrop"
             android:src="@drawable/bg" />
-    </me.panshen.com.circlemenu.PopupView>
+    </me.panshen.com.circlemenu.PopupCircleView>
 
-    <me.panshen.com.circlemenu.PopupView
+    <me.panshen.com.circlemenu.PopupCircleView
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         circlemenu:button_color="#ffffff"
-        circlemenu:button_size="60dp"
+        circlemenu:button_size="55dp"
         circlemenu:anim_duration="250"
         circlemenu:radius="100dp">
 
@@ -46,6 +46,6 @@
             android:layout_centerInParent="true"
             android:scaleType="centerCrop"
             android:src="@drawable/bg" />
-    </me.panshen.com.circlemenu.PopupView>
+    </me.panshen.com.circlemenu.PopupCircleView>
 
 </RelativeLayout>

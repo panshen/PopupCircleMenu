@@ -6,6 +6,7 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -20,43 +21,42 @@ import android.widget.RelativeLayout;
 
 public class PopupButton extends View {
     private final String TAG = this.getClass().getName();
-    private int mAlpha = 0;
     private Bitmap mBitmap = null;
-    private int mColor = 0;
+    private int mColor;
     private Paint mPaint = new Paint();
-    private int mWidth = 170;
-    private int mMargin = 20;
-    private int mCircleRadius = 0;
-    public int x = 0;
-    public int y = 0;
+    private int mWidth ;
+    private int mMargin;
+    private int mCircleRadius;
+    public int x ;
+    public int y ;
     private Rect mRect = new Rect();
     private boolean outanimating = false;
     private boolean inanimating = false;
     private BUTTON_STATE mButtonState = BUTTON_STATE.NORMAL;
     private ValueAnimator inanim = null;
     private ValueAnimator outanim = null;
-
-    private int mAnimDuration = 0;
-    private ValueAnimator mAnimeExplode = null;
+    private int mResourceId ;
+    private int mAnimDuration ;
+    private ValueAnimator mAnimeExplode ;
     private Path mPathExplode = new Path();
     private PathMeasure mPathMeasureExplode = new PathMeasure();
 
     public Path getmPathExplode() {
-        if (mPathExplode != null)
             mPathExplode.reset();
         return mPathExplode;
     }
 
-    public PopupButton(Context context, Bitmap img, int px, int color, int anim_duration) {
+    protected PopupButton(Context context, int resId, int px, int color, int anim_duration) {
         super(context);
-        this.mBitmap = img;
+        this.mResourceId = resId;
+        this.mBitmap = BitmapFactory.decodeResource(getResources(), mResourceId);
         this.mWidth = px;
         this.mColor = color;
         this.mAnimDuration = anim_duration;
         init();
     }
 
-    public PopupButton(Context context, int px, int color, int anim_duration) {
+    protected PopupButton(Context context, int px, int color, int anim_duration) {
         super(context);
         this.mWidth = px;
         this.mColor = color;
@@ -65,9 +65,8 @@ public class PopupButton extends View {
     }
 
     void init() {
-
         inanim = ValueAnimator.ofFloat(1.0f, 1.1f);
-        inanim.setDuration(150);
+        inanim.setDuration(100);
         inanim.setInterpolator(new LinearInterpolator());
         inanim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -88,12 +87,12 @@ public class PopupButton extends View {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 inanimating = true;
-                mButtonState = BUTTON_STATE.BIG;
+                mButtonState = BUTTON_STATE.SELECTED;
             }
         });
 
         outanim = ValueAnimator.ofFloat(1.1f, 1.0f);
-        outanim.setDuration(150);
+        outanim.setDuration(100);
         outanim.setInterpolator(new LinearInterpolator());
         outanim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -123,7 +122,6 @@ public class PopupButton extends View {
         mCircleRadius = mWidth / 2 - mMargin;
 
         mPaint.setAntiAlias(true);
-        mPaint.setAlpha(mAlpha);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(mColor);
         mPaint.setStrokeWidth(mMargin / 2);
@@ -133,16 +131,19 @@ public class PopupButton extends View {
 
         if (mBitmap != null)
             mBitmap = Bitmap.createScaledBitmap(mBitmap, mCircleRadius, mCircleRadius, true);
+
+    }
+
+    public int getResId(){
+        return mResourceId;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         if (mBitmap == null) {
             mPaint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(mWidth / 2, mWidth / 2, mCircleRadius, mPaint);
-
         } else {
             mPaint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(mWidth / 2, mWidth / 2, mCircleRadius, mPaint);
@@ -153,7 +154,6 @@ public class PopupButton extends View {
 
     void explode() {
         mPathMeasureExplode.setPath(mPathExplode, false);
-
         PropertyValuesHolder propertyScaleAnim = PropertyValuesHolder.ofFloat("anim_scale", mPathMeasureExplode.getLength(), 0f);
         PropertyValuesHolder propertyAlphaAnim = PropertyValuesHolder.ofFloat("anim_alpha", 0.0f, 0.0f, 0.3f, 0.5f, 1.0f);
 
@@ -174,7 +174,6 @@ public class PopupButton extends View {
                 setAlpha(animalphaValue);
             }
         });
-
         mAnimeExplode.start();
     }
 
@@ -195,7 +194,7 @@ public class PopupButton extends View {
                     if (mButtonState.equals(BUTTON_STATE.NORMAL) && !inanimating) {
                         inanim.start();
                     }
-                } else if (mButtonState.equals(BUTTON_STATE.BIG) && !outanimating && !inanimating) {
+                } else if (mButtonState.equals(BUTTON_STATE.SELECTED) && !outanimating && !inanimating) {
                     outanim.start();
                 }
                 break;
@@ -216,7 +215,7 @@ public class PopupButton extends View {
     }
 
     private enum BUTTON_STATE {
-        NORMAL, BIG
+        NORMAL, SELECTED
     }
 
 }

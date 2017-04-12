@@ -25,9 +25,9 @@ public class Popup extends RelativeLayout {
     private Rect btTempRect;
     private Point mWindowCenterPoint;
     public ArrayList<PopupButton> bts;
-    public int mSelectedIndex = 0;
+    public int mSelectedIndex ;
     private OverScreen mEnumOverScreen = OverScreen.TOP;
-    private int mOpenDriction = PopupView.UNDEFIEN;
+    private int mOpenDriction = PopupCircleView.UNDEFIEN;
 
     public int getmSelectedIndex() {
         return mSelectedIndex;
@@ -48,15 +48,15 @@ public class Popup extends RelativeLayout {
         display.getRectSize(mRectWindowRange);
         mWindowCenterPoint = new Point(mRectWindowRange.centerX(), mRectWindowRange.centerY());
 
-        RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mShadowView = new View(context);
         mShadowView.setBackgroundColor(Color.parseColor("#66000000"));
-        mShadowView.setLayoutParams(rl);
+        mShadowView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(mShadowView);
 
         for (PopupButton mb : bts) {
             addView(mb);
         }
+
     }
 
     public void setbts(ArrayList<PopupButton> bts) {
@@ -67,6 +67,7 @@ public class Popup extends RelativeLayout {
         for (PopupButton mb : bts) {
             addView(mb);
         }
+
     }
 
     public void resetCenter(Point point, int dirction) {
@@ -93,15 +94,14 @@ public class Popup extends RelativeLayout {
             path.lineTo(v.x, v.y);
             v.explode();
         }
-
     }
 
-    void updateMask(float f) {
+    void setShadowViewAlpha(float f) {
         mShadowView.setAlpha(f);
     }
 
     private Path getPath() {
-        if (mOpenDriction == PopupView.UNDEFIEN) {
+        if (mOpenDriction == PopupCircleView.UNDEFIEN) {
             return producePath(mEnumOverScreen);
         } else
             return genDriectPath();
@@ -219,24 +219,24 @@ public class Popup extends RelativeLayout {
     private Path producePath(OverScreen overScreen) {
         Path path = new Path();
         int start = 180;
-        int overdis = Math.abs(overScreen.getOverScreenDistance());
-        overdis = px2dip(overdis);
-        int startDegree = 0;
+        int overDis = Math.abs(overScreen.getOverScreenDistance());
+        overDis = px2dip(overDis);
+        int startDegree =0;
 
         switch (overScreen) {
             case LEFT:
-                if (start + overdis > 270) {
+                if (start + overDis > 270) {
                     startDegree = 270;
                 } else {
-                    startDegree = start + overdis;
+                    startDegree = start + overDis;
                 }
 
                 break;
             case RIGHT:
-                if (start - overdis < 90) {
+                if (start - overDis < 90) {
                     startDegree = 90;
                 } else {
-                    startDegree = start - overdis;
+                    startDegree = start - overDis;
                 }
 
                 break;
@@ -252,9 +252,9 @@ public class Popup extends RelativeLayout {
     private Path genDriectPath() {
         Path path = new Path();
         int startDegree = 0;
-        if (mOpenDriction == PopupView.LEFT) {
+        if (mOpenDriction == PopupCircleView.LEFT) {
             startDegree = 225;
-        } else if (mOpenDriction == PopupView.RIGHT) {
+        } else if (mOpenDriction == PopupCircleView.RIGHT) {
             startDegree = 135;
         }
         path.addArc(mArcRange, startDegree, 180);

@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListActivity extends AppCompatActivity {
     ListView lv;
@@ -19,7 +20,7 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.testlayout);
+        setContentView(R.layout.activity_listlayout);
         lv = (ListView) findViewById(R.id.lv);
         for (int i = 0; i < 10; i++) {
             list.add(i + "");
@@ -48,8 +49,9 @@ public class ListActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 vh = new VH();
-                convertView = LayoutInflater.from(ListActivity.this).inflate(R.layout.testitem, null);
-                vh.ppcircle = (PopupView) convertView.findViewById(R.id.ppcircle);
+                convertView = LayoutInflater.from(ListActivity.this).inflate(R.layout.item, null);
+                vh.mPopupMenu2 = (PopupCircleView) convertView.findViewById(R.id.PopupMenu2);
+                vh.mPopupMenu1 = (PopupCircleView) convertView.findViewById(R.id.PopupMenu1);
                 vh.tv_1 = (ImageView) convertView.findViewById(R.id.iv_left);
                 vh.iv = (ImageView) convertView.findViewById(R.id.iv);
                 convertView.setTag(vh);
@@ -71,27 +73,51 @@ public class ListActivity extends AppCompatActivity {
                 }
             });
 
-            Integer[] drawables = {R.drawable.audio, R.drawable.display,R.drawable.heart};
-            vh.ppcircle.initRes(drawables);
-            vh.ppcircle.setmOnMenuEventListener(new PopupView.OnMenuEventListener() {
+            vh.mPopupMenu1.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
                 @Override
                 public void onMenuToggle(PopupButton pb, int index) {
-                    if(index==1){
-                        Toast.makeText(ListActivity.this, "HEADSET", Toast.LENGTH_SHORT).show();
-                    }else if(index==2){
-                        Toast.makeText(ListActivity.this, "TV", Toast.LENGTH_SHORT).show();
-                    }else if(index==3){
-                        Toast.makeText(ListActivity.this, "HEART", Toast.LENGTH_SHORT).show();
+                    switch(pb.getResId()){
+                        case R.drawable.like:
+                            Toast.makeText(ListActivity.this, "like", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.drawable.unlike:
+                            Toast.makeText(ListActivity.this, "unlike", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.drawable.trashbin:
+                            Toast.makeText(ListActivity.this, "trashbin", Toast.LENGTH_SHORT).show();
+                            break;
                     }
                 }
             });
+
+            Integer[] res = {R.drawable.tv,R.drawable.heart,R.drawable.headset};
+            vh.mPopupMenu2.initRes(res);
+            vh.mPopupMenu2.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
+                @Override
+                public void onMenuToggle(PopupButton pb, int index) {
+
+                    switch(pb.getResId()){
+                        case R.drawable.tv:
+                            Toast.makeText(ListActivity.this, "tv", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.drawable.heart:
+                            Toast.makeText(ListActivity.this, "heart", Toast.LENGTH_SHORT).show();
+                            break;
+                        case R.drawable.headset:
+                            Toast.makeText(ListActivity.this, "headset", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            });
+
+
 
             return convertView;
         }
 
         class VH {
             ImageView tv_1, iv;
-            PopupView ppcircle;
+            PopupCircleView mPopupMenu1, mPopupMenu2;
         }
     }
 }

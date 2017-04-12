@@ -4,7 +4,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -20,7 +19,7 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
-public class PopupView extends RelativeLayout implements Handler.Callback {
+public class PopupCircleView extends RelativeLayout implements Handler.Callback {
     private String TAG = getClass().getName();
     private Activity mContext;
     private Popup mPopup;
@@ -40,23 +39,15 @@ public class PopupView extends RelativeLayout implements Handler.Callback {
     public static final int LEFT = 1;
     public int OPEN_DRIECTION = UNDEFIEN;
 
-    private final int mTriggerPixle = 25;
+    private int mTriggerPixle = 25;
 
     private boolean mAbleToggle;
 
-    private int mBtsize = 0;
-    private int mRadius = 0;
-    private int mBtbackcolor = 0;
+    private int mBtsize;
+    private int mRadius;
+    private int mBtbackcolor;
     private int mAnimDuration = 250;
     private Handler mHandler;
-
-    boolean juageCallback() {
-        return mOnMenuEventListener != null &&
-                mPopup.bts != null &&
-                mPopup.mSelectedIndex != -1 &&
-                mPopup.mSelectedIndex != 0 &&
-                mPopup.bts.size() > 0;
-    }
 
     public void setmOnMenuEventListener(OnMenuEventListener mOnMenuEventListener) {
         this.mOnMenuEventListener = mOnMenuEventListener;
@@ -66,13 +57,13 @@ public class PopupView extends RelativeLayout implements Handler.Callback {
         ArrayList<PopupButton> mbuttons = new ArrayList<>();
         mbuttons.add(new PopupButton(mContext, mBtsize, mBtbackcolor, mAnimDuration));
         for (Integer re : res) {
-            mbuttons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), re), mBtsize, mBtbackcolor, mAnimDuration));
+            mbuttons.add(new PopupButton(mContext, re, mBtsize, mBtbackcolor, mAnimDuration));
         }
 
         mPopup.setbts(mbuttons);
     }
 
-    public PopupView(Context context, AttributeSet attrs) {
+    public PopupCircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = (Activity) context;
         mHandler = new Handler(Looper.getMainLooper(), this);
@@ -116,19 +107,27 @@ public class PopupView extends RelativeLayout implements Handler.Callback {
         return p;
     }
 
-    void initDefaultParam() {
+    private void initDefaultParam() {
         mBtsize = getResources().getDimensionPixelSize(R.dimen.default_busize);
         mRadius = getResources().getDimensionPixelSize(R.dimen.default_radius);
         mBtbackcolor = Color.WHITE;
     }
 
-    void init() {
+    boolean juageCallback() {
+        return mOnMenuEventListener != null &&
+                mPopup.bts != null &&
+                mPopup.mSelectedIndex != -1 &&
+                mPopup.mSelectedIndex != 0 &&
+                mPopup.bts.size() > 0;
+    }
+
+    private void init() {
         mLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
         mButtons.add(new PopupButton(mContext, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.audio), mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.display), mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, BitmapFactory.decodeResource(getResources(), R.drawable.heart), mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, R.drawable.trashbin, mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, R.drawable.unlike, mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, R.drawable.like, mBtsize, mBtbackcolor, mAnimDuration));
 
         mPopup = new Popup(mContext, mButtons, mRadius);
         mPopup.setVisibility(INVISIBLE);
@@ -139,7 +138,7 @@ public class PopupView extends RelativeLayout implements Handler.Callback {
         mAlphAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mPopup.updateMask(Float.valueOf(animation.getAnimatedValue() + ""));
+                mPopup.setShadowViewAlpha(Float.valueOf(animation.getAnimatedValue() + ""));
             }
         });
     }
@@ -238,7 +237,7 @@ public class PopupView extends RelativeLayout implements Handler.Callback {
         void onMenuToggle(PopupButton popupButton, int index);
     }
 
-    void dismiss(MotionEvent ev) {
+    private void dismiss(MotionEvent ev) {
         isshowing = false;
         if (mPopup.getVisibility() == VISIBLE) {
             mAlphAnimator.reverse();
