@@ -1,4 +1,4 @@
-package me.panshen.com.circlemenu;
+package com.panshen.popupcircleview;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -19,13 +19,14 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
+
 public class PopupCircleView extends RelativeLayout implements Handler.Callback {
     private String TAG = getClass().getName();
     private Activity mContext;
     private Popup mPopup;
     private Rect mTriggerRect;
     private ViewGroup mDecorView;
-    private RelativeLayout.LayoutParams mLayoutParams;
+    private LayoutParams mLayoutParams;
     private ArrayList<PopupButton> mButtons = new ArrayList<>();
     private ValueAnimator mAlphAnimator;
     private OnMenuEventListener mOnMenuEventListener;
@@ -122,7 +123,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     }
 
     private void init() {
-        mLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
         mButtons.add(new PopupButton(mContext, mBtsize, mBtbackcolor, mAnimDuration));
         mButtons.add(new PopupButton(mContext, R.drawable.trashbin, mBtsize, mBtbackcolor, mAnimDuration));

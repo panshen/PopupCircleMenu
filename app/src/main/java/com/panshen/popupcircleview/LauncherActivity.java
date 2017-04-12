@@ -1,10 +1,11 @@
-package me.panshen.com.circlemenu;
+package com.panshen.popupcircleview;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
 
 /**
  * Created by XPS on 2017/4/12.

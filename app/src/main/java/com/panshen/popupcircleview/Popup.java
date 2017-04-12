@@ -1,4 +1,4 @@
-package me.panshen.com.circlemenu;
+package com.panshen.popupcircleview;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -50,7 +50,7 @@ public class Popup extends RelativeLayout {
 
         mShadowView = new View(context);
         mShadowView.setBackgroundColor(Color.parseColor("#66000000"));
-        mShadowView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mShadowView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(mShadowView);
 
         for (PopupButton mb : bts) {

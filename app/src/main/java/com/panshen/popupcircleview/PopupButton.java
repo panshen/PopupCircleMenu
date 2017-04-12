@@ -1,4 +1,4 @@
-package me.panshen.com.circlemenu;
+package com.panshen.popupcircleview;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

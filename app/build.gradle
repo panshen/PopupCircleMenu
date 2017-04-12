@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "me.panshen.com.circlemenu"
+        applicationId "com.panshen.popupcircleview"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
