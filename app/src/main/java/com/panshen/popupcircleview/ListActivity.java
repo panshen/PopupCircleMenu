@@ -79,14 +79,14 @@ public class ListActivity extends AppCompatActivity {
                 @Override
                 public void onMenuToggle(PopupButton pb, int index) {
                     switch(pb.getResId()){
-                        case R.drawable.like:
-                            Toast.makeText(ListActivity.this, "like", Toast.LENGTH_SHORT).show();
+                        case R.drawable.good:
+                            Toast.makeText(ListActivity.this, "good", Toast.LENGTH_SHORT).show();
                             break;
-                        case R.drawable.unlike:
-                            Toast.makeText(ListActivity.this, "unlike", Toast.LENGTH_SHORT).show();
+                        case R.drawable.favorite:
+                            Toast.makeText(ListActivity.this, "favorite", Toast.LENGTH_SHORT).show();
                             break;
-                        case R.drawable.trashbin:
-                            Toast.makeText(ListActivity.this, "trashbin", Toast.LENGTH_SHORT).show();
+                        case R.drawable.share:
+                            Toast.makeText(ListActivity.this, "share", Toast.LENGTH_SHORT).show();
                             break;
                     }
                 }

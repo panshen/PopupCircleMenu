@@ -118,9 +118,9 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
         mLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
         mButtons.add(new PopupButton(mContext, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, R.drawable.trashbin, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, R.drawable.unlike, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, R.drawable.like, mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, R.drawable.good, mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, R.drawable.favorite, mBtsize, mBtbackcolor, mAnimDuration));
+        mButtons.add(new PopupButton(mContext, R.drawable.share, mBtsize, mBtbackcolor, mAnimDuration));
 
         mPopup = new Popup(mContext, mButtons, mRadius);
         mPopup.setVisibility(INVISIBLE);
