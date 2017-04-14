@@ -12,7 +12,7 @@
         android:layout_margin="5dp"
         circlemenu:cardCornerRadius="5dp">
 
-        <com.panshen.popupcircleview.PopupCircleView
+        <xps.panshen.com.popupcirclemenu.PopupCircleView
             android:id="@+id/PopupMenu1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg" />
 
-        </com.panshen.popupcircleview.PopupCircleView>
+        </xps.panshen.com.popupcirclemenu.PopupCircleView>
 
     </android.support.v7.widget.CardView>
 
@@ -41,7 +41,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp">
 
-        <com.panshen.popupcircleview.PopupCircleView
+        <xps.panshen.com.popupcirclemenu.PopupCircleView
             android:id="@+id/PopupMenu2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,9 +59,9 @@
                 android:layout_height="35dp"
                 android:padding="7dp"
                 android:src="@drawable/dots" />
-        </com.panshen.popupcircleview.PopupCircleView>
+        </xps.panshen.com.popupcirclemenu.PopupCircleView>
 
-        <com.panshen.popupcircleview.PopupCircleView
+        <xps.panshen.com.popupcirclemenu.PopupCircleView
             android:id="@+id/PopupMenu3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 android:padding="7dp"
                 android:src="@drawable/dots" />
 
-        </com.panshen.popupcircleview.PopupCircleView>
+        </xps.panshen.com.popupcirclemenu.PopupCircleView>
     </RelativeLayout>
 </LinearLayout>
 

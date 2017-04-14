@@ -1,4 +1,4 @@
-package com.panshen.popupcircleview;
+package xps.panshen.com.popupcirclemenu;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -75,26 +75,18 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
         for (int i = 0; i < n; i++) {
             int attr = a.getIndex(i);
-            switch (attr) {
-                case R.styleable.circlemenu_button_color:
-                    mBtbackcolor = a.getColor(attr, Color.WHITE);
-                    break;
-                case R.styleable.circlemenu_button_size:
-                    mBtsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_SP, 40, getResources().getDisplayMetrics()));
-                    break;
-                case R.styleable.circlemenu_radius:
-                    mRadius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
-                    break;
-                case R.styleable.circlemenu_anim_duration:
-                    mAnimDuration = a.getInt(attr, 250);
-                    break;
-                case R.styleable.circlemenu_open_direction:
-                    OPEN_DRIECTION = a.getInt(attr, UNDEFIEN);
-                    break;
-                default:
-                    break;
+            if (attr == R.styleable.circlemenu_button_color) {
+                mBtbackcolor = a.getColor(attr, Color.WHITE);
+            } else if (attr == R.styleable.circlemenu_button_size) {
+                mBtsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP, 40, getResources().getDisplayMetrics()));
+            } else if (attr == R.styleable.circlemenu_radius) {
+                mRadius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
+            } else if (attr == R.styleable.circlemenu_anim_duration) {
+                mAnimDuration = a.getInt(attr, 250);
+            } else if (attr == R.styleable.circlemenu_open_direction) {
+                OPEN_DRIECTION = a.getInt(attr, UNDEFIEN);
             }
         }
         init();
@@ -234,8 +226,8 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
         super.onDetachedFromWindow();
     }
 
-    interface OnMenuEventListener {
-        void onMenuToggle(PopupButton popupButton, int index);
+    public interface OnMenuEventListener {
+         void onMenuToggle(PopupButton popupButton, int index);
     }
 
     private void dismiss(MotionEvent ev) {
@@ -253,4 +245,5 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             mHandler.removeMessages(ACTION_DOWN);
         }
     }
+
 }

@@ -1,14 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="circlemenu">
-        <attr name="button_color" format="color|reference" />
-        <attr name="button_size" format="dimension|reference" />
-        <attr name="radius" format="dimension|reference" />
-        <attr name="anim_duration" format="integer" />
-        <attr name="open_direction">
-            <enum name="RIGHT" value="1" />
-            <enum name="LEFT" value="2" />
-        </attr>
-
-    </declare-styleable>
 </resources>

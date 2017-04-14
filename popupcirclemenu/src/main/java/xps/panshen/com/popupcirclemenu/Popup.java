@@ -1,4 +1,4 @@
-package com.panshen.popupcircleview;
+package xps.panshen.com.popupcirclemenu;
 
 import android.app.Activity;
 import android.graphics.Color;

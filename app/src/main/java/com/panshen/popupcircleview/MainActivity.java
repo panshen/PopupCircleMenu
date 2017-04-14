@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import xps.panshen.com.popupcirclemenu.PopupButton;
+import xps.panshen.com.popupcirclemenu.PopupCircleView;
+
 
 public class MainActivity extends AppCompatActivity {
     PopupCircleView ppView;
