@@ -18,20 +18,25 @@ import xps.panshen.com.popupcirclemenu.PopupCircleView;
 
 public class ListActivity extends AppCompatActivity {
     ListView lv;
-    ArrayList<String> list = new ArrayList<>();
+    ArrayList<bean> list = new ArrayList<>();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listlayout);
         lv = (ListView) findViewById(R.id.lv);
-        for (int i = 0; i < 10; i++) {
-            list.add(i + "");
+        for (int i = 0; i < 20; i++) {
+
+            list.add(new bean());
+
         }
         lv.setAdapter(new adapter());
+
     }
 
     private class adapter extends BaseAdapter {
         VH vh = null;
+
         @Override
         public int getCount() {
             return list.size();
@@ -49,77 +54,109 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            final bean b = list.get(position);
             if (convertView == null) {
                 vh = new VH();
                 convertView = LayoutInflater.from(ListActivity.this).inflate(R.layout.item, null);
-                vh.mPopupMenu2 = (PopupCircleView) convertView.findViewById(R.id.PopupMenu2);
-                vh.mPopupMenu1 = (PopupCircleView) convertView.findViewById(R.id.PopupMenu1);
-                vh.tv_1 = (ImageView) convertView.findViewById(R.id.iv_left);
-                vh.iv = (ImageView) convertView.findViewById(R.id.iv);
+                vh.mPopupMenu = (PopupCircleView) convertView.findViewById(R.id.PopupMenu);
+                vh.mIv = (ImageView) convertView.findViewById(R.id.iv);
                 convertView.setTag(vh);
             } else {
                 vh = (VH) convertView.getTag();
             }
 
-            vh.tv_1.setOnClickListener(new View.OnClickListener() {
+            vh.mIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ListActivity.this, "Menu click",  Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ListActivity.this,"ImageClick",0).show();
                 }
             });
 
-            vh.iv.setOnClickListener(new View.OnClickListener() {
+            vh.mPopupMenu.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
                 @Override
-                public void onClick(View v) {
-                    Toast.makeText(ListActivity.this, "Image click", Toast.LENGTH_SHORT).show();
+                public void onMenuToggle(PopupButton popupButton, int index) {
+
+                    if(popupButton.getId()==R.id.pb_like){
+                        b.setLike(popupButton.isChecked());
+                    }else if(popupButton.getId()==R.id.pb_favorite){
+                        b.setFavorite(popupButton.isChecked());
+                    }else if(popupButton.getId()==R.id.pb_share){
+                        b.setShare(popupButton.isChecked());
+                    }
+
                 }
             });
 
-            vh.mPopupMenu1.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
+            vh.mPopupMenu.setOnButtonPreparedListener(new PopupCircleView.OnButtonPreparedListener() {
                 @Override
-                public void onMenuToggle(PopupButton pb, int index) {
-                    switch(pb.getResId()){
-                        case R.drawable.good:
-                            Toast.makeText(ListActivity.this, "good", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.drawable.favorite:
-                            Toast.makeText(ListActivity.this, "favorite", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.drawable.share:
-                            Toast.makeText(ListActivity.this, "share", Toast.LENGTH_SHORT).show();
-                            break;
+                public void onPrepared(ArrayList<PopupButton> bts) {
+
+                    for(PopupButton pb:bts){
+                        if(b.isLike())
+                            if(pb.getId()==R.id.pb_like){
+                                pb.setChecked(true);
+                            }
+
+                        if(b.isShare())
+                            if(pb.getId()==R.id.pb_share){
+                                pb.setChecked(true);
+                            }
+
+                        if(b.isFavorite())
+                            if(pb.getId()==R.id.pb_favorite){
+                                pb.setChecked(true);
+                            }
+
                     }
                 }
             });
-
-            Integer[] res = {R.drawable.tv,R.drawable.heart,R.drawable.headset};
-            vh.mPopupMenu2.initRes(res);
-            vh.mPopupMenu2.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
-                @Override
-                public void onMenuToggle(PopupButton pb, int index) {
-
-                    switch(pb.getResId()){
-                        case R.drawable.tv:
-                            Toast.makeText(ListActivity.this, "tv", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.drawable.heart:
-                            Toast.makeText(ListActivity.this, "heart", Toast.LENGTH_SHORT).show();
-                            break;
-                        case R.drawable.headset:
-                            Toast.makeText(ListActivity.this, "headset", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                }
-            });
-
-
 
             return convertView;
         }
 
         class VH {
-            ImageView tv_1, iv;
-            PopupCircleView mPopupMenu1, mPopupMenu2;
+            ImageView mIv;
+            PopupCircleView mPopupMenu;
+        }
+
+    }
+
+    class bean {
+        boolean like ;
+        boolean share ;
+        boolean favorite;
+
+        public bean() {
+        }
+
+        public bean(boolean like, boolean share, boolean favorite) {
+            this.like = like;
+            this.share = share;
+            this.favorite = favorite;
+        }
+
+        public boolean isLike() {
+            return like;
+        }
+
+        public void setLike(boolean like) {
+            this.like = like;
+        }
+
+        public boolean isShare() {
+            return share;
+        }
+
+        public void setShare(boolean share) {
+            this.share = share;
+        }
+
+        public boolean isFavorite() {
+            return favorite;
+        }
+
+        public void setFavorite(boolean favorite) {
+            this.favorite = favorite;
         }
     }
 }

@@ -14,6 +14,7 @@ import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -30,6 +31,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     private ArrayList<PopupButton> mButtons = new ArrayList<>();
     private ValueAnimator mAlphAnimator;
     private OnMenuEventListener mOnMenuEventListener;
+    private OnButtonPreparedListener onButtonPreparedListener;
 
     private static boolean isshowing;
     private static final int ACTION_DOWN = 0;
@@ -49,20 +51,20 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     private int mBtbackcolor;
     private int mAnimDuration = 250;
     private Handler mHandler;
-
     public void setmOnMenuEventListener(OnMenuEventListener mOnMenuEventListener) {
         this.mOnMenuEventListener = mOnMenuEventListener;
     }
 
-    public void initRes(Integer... res) {
-        ArrayList<PopupButton> mbuttons = new ArrayList<>();
-        mbuttons.add(new PopupButton(mContext, mBtsize, mBtbackcolor, mAnimDuration));
-        for (Integer re : res) {
-            mbuttons.add(new PopupButton(mContext, re, mBtsize, mBtbackcolor, mAnimDuration));
+    public void setOnButtonPreparedListener(OnButtonPreparedListener onButtonPreparedListener) {
+        if(this.onButtonPreparedListener ==null){
+            this.onButtonPreparedListener = onButtonPreparedListener;
+        }else {
+            resetbutton();
+            onButtonPreparedListener.onPrepared(mButtons);
         }
 
-        mPopup.setbts(mbuttons);
     }
+
 
     public PopupCircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -77,9 +79,6 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             int attr = a.getIndex(i);
             if (attr == R.styleable.circlemenu_button_color) {
                 mBtbackcolor = a.getColor(attr, Color.WHITE);
-            } else if (attr == R.styleable.circlemenu_button_size) {
-                mBtsize = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_SP, 40, getResources().getDisplayMetrics()));
             } else if (attr == R.styleable.circlemenu_radius) {
                 mRadius = a.getDimensionPixelSize(attr, (int) TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
@@ -90,6 +89,15 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             }
         }
         init();
+    }
+
+    void initChilds() {
+        for (int i = 0; i < getChildCount() - 1; i++) {
+            PopupButton pb = (PopupButton) getChildAt(i);
+            mButtons.add(pb);
+        }
+        removeViews(0, getChildCount() - 1);
+        mPopup.setbts(mButtons);
     }
 
     private Point getViewCenterPoint() {
@@ -108,21 +116,15 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
     boolean juageCallback() {
         return mOnMenuEventListener != null &&
-                mPopup.bts != null &&
                 mPopup.mSelectedIndex != -1 &&
-                mPopup.mSelectedIndex != 0 &&
-                mPopup.bts.size() > 0;
+                mPopup.mSelectedIndex != 0;
     }
 
     private void init() {
         mLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
-        mButtons.add(new PopupButton(mContext, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, R.drawable.good, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, R.drawable.favorite, mBtsize, mBtbackcolor, mAnimDuration));
-        mButtons.add(new PopupButton(mContext, R.drawable.share, mBtsize, mBtbackcolor, mAnimDuration));
 
-        mPopup = new Popup(mContext, mButtons, mRadius);
+        mPopup = new Popup(mContext, mRadius);
         mPopup.setVisibility(INVISIBLE);
         mAlphAnimator = new ValueAnimator();
         mAlphAnimator.setFloatValues(0.0f, 1.0f);
@@ -134,6 +136,20 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
                 mPopup.setShadowViewAlpha(Float.valueOf(animation.getAnimatedValue() + ""));
             }
         });
+        addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                initChilds();
+                if(onButtonPreparedListener !=null)
+                onButtonPreparedListener.onPrepared(mButtons);
+            }
+        });
+    }
+
+    void resetbutton(){
+        for(PopupButton pb:mButtons){
+            pb.setChecked(false);
+        }
     }
 
     @Override
@@ -193,6 +209,14 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     public boolean handleMessage(Message msg) {
         if (msg.what == ACTION_DOWN) {
             if (mAbleToggle && mPopup.getVisibility() == INVISIBLE && !isshowing) {
+
+                /*
+                * 如果没有设置此监听器 代表不关心选中状态 主动选中状态
+                * 为了防止在列表中View被复用时状态错乱
+                * */
+                if(mOnMenuEventListener==null)
+                    resetbutton();
+
                 MotionEvent newEv = (MotionEvent) msg.obj;
                 isshowing = true;
                 mAlphAnimator.start();
@@ -215,7 +239,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             mAbleToggle = false;
             getParent().requestDisallowInterceptTouchEvent(false);
             if (juageCallback()) {
-                mOnMenuEventListener.onMenuToggle(mPopup.bts.get(mPopup.getmSelectedIndex()), mPopup.getmSelectedIndex());
+                mOnMenuEventListener.onMenuToggle(mButtons.get(mPopup.getmSelectedIndex()-1), mPopup.getmSelectedIndex());
             }
         }
         return false;
@@ -227,7 +251,11 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     }
 
     public interface OnMenuEventListener {
-         void onMenuToggle(PopupButton popupButton, int index);
+        void onMenuToggle(PopupButton popupButton, int index);
+    }
+
+    public interface OnButtonPreparedListener {
+        void onPrepared(ArrayList<PopupButton> bts);
     }
 
     private void dismiss(MotionEvent ev) {
@@ -241,9 +269,8 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             mPopup.dispatchTouchEvent(ev);
         } else {
             if (mPopup.getVisibility() == INVISIBLE && getChildAt(0) != null && mTriggerRect.contains((int) ev.getRawX(), (int) ev.getRawY()))
-                getChildAt(0).performClick();
+                getChildAt(getChildCount()-1).performClick();
             mHandler.removeMessages(ACTION_DOWN);
         }
     }
-
 }

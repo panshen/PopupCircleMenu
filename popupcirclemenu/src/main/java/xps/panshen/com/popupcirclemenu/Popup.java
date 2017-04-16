@@ -7,6 +7,7 @@ import android.graphics.PathMeasure;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,8 +25,7 @@ public class Popup extends RelativeLayout {
     private Rect mRectWindowRange;
     private Rect btTempRect;
     private Point mWindowCenterPoint;
-    public ArrayList<PopupButton> bts;
-    public int mSelectedIndex ;
+    public int mSelectedIndex;
     private OverScreen mEnumOverScreen = OverScreen.TOP;
     private int mOpenDriction = PopupCircleView.UNDEFIEN;
 
@@ -37,9 +37,8 @@ public class Popup extends RelativeLayout {
         this.mSelectedIndex = mSelectedIndex;
     }
 
-    public Popup(Activity context, ArrayList<PopupButton> bts, int radius) {
+    public Popup(Activity context, int radius) {
         super(context);
-        this.bts = bts;
         mRadius = radius;
 
         Display display = context.getWindow().getWindowManager().getDefaultDisplay();
@@ -49,25 +48,17 @@ public class Popup extends RelativeLayout {
         mWindowCenterPoint = new Point(mRectWindowRange.centerX(), mRectWindowRange.centerY());
 
         mShadowView = new View(context);
+        mShadowView.setTag("mask");
         mShadowView.setBackgroundColor(Color.parseColor("#66000000"));
         mShadowView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(mShadowView);
 
-        for (PopupButton mb : bts) {
-            addView(mb);
-        }
-
     }
 
     public void setbts(ArrayList<PopupButton> bts) {
-        this.bts.clear();
-        this.bts.addAll(bts);
-
-        removeViews(1, getChildCount() - 1);
         for (PopupButton mb : bts) {
             addView(mb);
         }
-
     }
 
     public void resetCenter(Point point, int dirction) {
@@ -78,17 +69,18 @@ public class Popup extends RelativeLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        View view = getChildAt(0);
+        View view = getChildAt(0);//layout 背景
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        //layout 中心的按钮
         View centerButton = getChildAt(1);
         centerButton.layout(mPoint.x - centerButton.getMeasuredWidth() / 2, mPoint.y - centerButton.getMeasuredHeight() / 2, mPoint.x + centerButton.getMeasuredWidth() / 2, mPoint.y + centerButton.getMeasuredHeight() / 2);
 
         setPos(getPath());
 
-        for (int i = 1; i < bts.size(); i++) {
-            PopupButton v = bts.get(i);
+        for (int i = 2; i < getChildCount(); i++) {
+            PopupButton v = (PopupButton) getChildAt(i);
             v.layout(v.x, v.y, v.x + v.getMeasuredWidth(), v.y + v.getMeasuredHeight());
-
             Path path = v.getmPathExplode();
             path.moveTo(mPoint.x - v.getMeasuredWidth() / 2, mPoint.y - v.getMeasuredHeight() / 2);
             path.lineTo(v.x, v.y);
@@ -114,33 +106,38 @@ public class Popup extends RelativeLayout {
         switch (action) {
 
             case MotionEvent.ACTION_DOWN:
-                getDirection(ev);
-                for (PopupButton mb : bts) {
-                    mb.dispatchTouchEvent(ev);
+                initDirection(ev);
+
+                for (int i = 1; i < getChildCount(); i++) {
+                    getChildAt(i).dispatchTouchEvent(ev);
                 }
 
                 return false;
             case MotionEvent.ACTION_MOVE:
-                for (int i = 1; i < bts.size(); i++) {
-                    bts.get(i).dispatchTouchEvent(ev);
+
+                for (int i = 2; i < getChildCount(); i++) {
+                    getChildAt(i).dispatchTouchEvent(ev);
                 }
+
                 return false;
             case MotionEvent.ACTION_UP:
                 int x = (int) ev.getRawX();
                 int y = (int) ev.getRawY();
                 PopupButton mb;
 
-                for (int i = 0; i < bts.size(); i++) {
-                    bts.get(i).dispatchTouchEvent(ev);
+                for (int i = 1; i < getChildCount(); i++) {
+                    getChildAt(i).dispatchTouchEvent(ev);
                 }
 
-                for (int i = 0; i < bts.size(); i++) {
-                    mb = bts.get(i);
+                for (int i = 1; i < getChildCount(); i++) {
+                    mb = (PopupButton) getChildAt(i);
                     mb.getHitRect(btTempRect);
                     if (btTempRect.contains(x, y)) {
                         setmSelectedIndex(i);
                         break;
-                    } else setmSelectedIndex(-1);
+                    } else {
+                        setmSelectedIndex(-1);
+                    }
                 }
 
                 return false;
@@ -152,7 +149,7 @@ public class Popup extends RelativeLayout {
         return false;
     }
 
-    private void getDirection(MotionEvent ev) {
+    private void initDirection(MotionEvent ev) {
         int x = (int) ev.getRawX();
         int arcRightXpos = 0;
         int overScreen = 0;
@@ -178,17 +175,28 @@ public class Popup extends RelativeLayout {
         }
     }
 
+    /**
+     * 用来给每一个button设置一个中心点
+     *
+     * @param orbit 一个特定角度的path
+     */
     private void setPos(Path orbit) {
+
+        ArrayList<PopupButton> pp = new ArrayList<>();
+        for (int i = 1; i < getChildCount(); i++) {
+            pp.add((PopupButton) getChildAt(i));
+        }
+
         PathMeasure measure = new PathMeasure(orbit, false);
-        int divisor = bts.size();
-        for (int i = 1; i < bts.size(); i++) {
+        int divisor = pp.size();
+        for (int i = 1; i < pp.size(); i++) {
             float[] coords = new float[]{0f, 0f};
             int length = (int) ((i) * measure.getLength() / divisor);
             measure.getPosTan(length, coords, null);
-            int x = (int) coords[0] - bts.get(i).getMeasuredWidth() / 2;
-            int y = (int) coords[1] - bts.get(i).getMeasuredHeight() / 2;
-            bts.get(i).x = x;
-            bts.get(i).y = y;
+            int x = (int) coords[0] - pp.get(i).getMeasuredWidth() / 2;
+            int y = (int) coords[1] - pp.get(i).getMeasuredHeight() / 2;
+            pp.get(i).x = x;
+            pp.get(i).y = y;
         }
     }
 
@@ -216,12 +224,13 @@ public class Popup extends RelativeLayout {
         return (int) (pxValue / scale + 0.5f);
     }
 
+    //获得一个特定角度的path
     private Path producePath(OverScreen overScreen) {
         Path path = new Path();
         int start = 180;
         int overDis = Math.abs(overScreen.getOverScreenDistance());
         overDis = px2dip(overDis);
-        int startDegree =0;
+        int startDegree = 0;
 
         switch (overScreen) {
             case LEFT:
@@ -238,7 +247,6 @@ public class Popup extends RelativeLayout {
                 } else {
                     startDegree = start - overDis;
                 }
-
                 break;
             case TOP:
                 startDegree = 180;

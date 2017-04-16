@@ -2,7 +2,6 @@
 <resources>
     <declare-styleable name="circlemenu">
         <attr name="button_color" format="color|reference" />
-        <attr name="button_size" format="dimension|reference" />
         <attr name="radius" format="dimension|reference" />
         <attr name="anim_duration" format="integer" />
         <attr name="open_direction">
@@ -11,4 +10,12 @@
         </attr>
 
     </declare-styleable>
+
+    <declare-styleable name="circlebutton">
+        <attr name="pb_color" format="color|reference" />
+        <attr name="pb_color_checked" format="color|reference" />
+        <attr name="pb_background" format="reference" />
+        <attr name="pb_background_checked" format="reference" />
+    </declare-styleable>
+
 </resources>

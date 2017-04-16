@@ -5,47 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <xps.panshen.com.popupcirclemenu.PopupCircleView
-        android:id="@+id/PopupMenu2"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_centerInParent="true"
-        circlemenu:anim_duration="250"
-        circlemenu:button_color="#ffffff"
-        circlemenu:button_size="55dp"
-        circlemenu:radius="100dp">
+    <!--<xps.panshen.com.popupcirclemenu.PopupCircleView-->
+        <!--android:id="@+id/PopupMenu2"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--circlemenu:anim_duration="250"-->
+        <!--circlemenu:button_color="#ffffff"-->
+        <!--circlemenu:button_size="55dp"-->
+        <!--circlemenu:radius="100dp">-->
 
-        <ImageView
-            android:id="@+id/iv_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg" />
+        <!--<ImageView-->
+            <!--android:id="@+id/iv_bottom"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:scaleType="centerCrop"-->
+            <!--android:src="@drawable/bg" />-->
 
-    </xps.panshen.com.popupcirclemenu.PopupCircleView>
+    <!--</xps.panshen.com.popupcirclemenu.PopupCircleView>-->
 
-    <xps.panshen.com.popupcirclemenu.PopupCircleView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        circlemenu:anim_duration="250"
-        circlemenu:button_color="#ffffff"
-        circlemenu:button_size="55dp"
-        circlemenu:radius="100dp">
+    <!--<xps.panshen.com.popupcirclemenu.PopupCircleView-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--circlemenu:anim_duration="250"-->
+        <!--circlemenu:button_color="#ffffff"-->
+        <!--circlemenu:button_size="55dp"-->
+        <!--circlemenu:radius="100dp">-->
 
-        <ImageView
-            android:id="@+id/iv_up"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg" />
+        <!--<ImageView-->
+            <!--android:id="@+id/iv_up"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:scaleType="centerCrop"-->
+            <!--android:src="@drawable/bg" />-->
 
-    </xps.panshen.com.popupcirclemenu.PopupCircleView>
+    <!--</xps.panshen.com.popupcirclemenu.PopupCircleView>-->
 
 </RelativeLayout>
