@@ -24,7 +24,9 @@
 
         </activity>
 
-        <activity android:name="com.panshen.popupcircleview.MainActivity"></activity>
+        <activity
+            android:exported="true"
+            android:name="com.panshen.popupcircleview.MainActivity"></activity>
 
     </application>
 

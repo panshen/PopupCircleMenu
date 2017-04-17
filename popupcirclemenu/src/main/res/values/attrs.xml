@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="circlemenu">
-        <attr name="button_color" format="color|reference" />
+    <declare-styleable name="CircleMenu">
         <attr name="radius" format="dimension|reference" />
         <attr name="anim_duration" format="integer" />
         <attr name="open_direction">
@@ -11,10 +10,11 @@
 
     </declare-styleable>
 
-    <declare-styleable name="circlebutton">
+    <declare-styleable name="CircleButton">
         <attr name="pb_color" format="color|reference" />
         <attr name="pb_color_checked" format="color|reference" />
         <attr name="pb_background" format="reference" />
+        <attr name="pb_checkable" format="boolean" />
         <attr name="pb_background_checked" format="reference" />
     </declare-styleable>
 

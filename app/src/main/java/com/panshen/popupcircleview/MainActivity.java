@@ -16,36 +16,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        ppView = (PopupCircleView) findViewById(R.id.PopupMenu2);
-//
-//        ppView.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
-//            @Override
-//            public void onMenuToggle(PopupButton pb, int index) {
-//                switch(pb.getResId()){
-//                    case R.drawable.good:
-//                        Toast.makeText(MainActivity.this, "good", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case R.drawable.favorite:
-//                        Toast.makeText(MainActivity.this, "favorite", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case R.drawable.share:
-//                        Toast.makeText(MainActivity.this, "share", Toast.LENGTH_SHORT).show();
-//                        break;
-//                }
-//            }
-//        });
-//
-//        findViewById(R.id.iv_up).setOnClickListener(new View.OnClickListener() {
+//        findViewById(R.id.iv_1).setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "image click ", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        findViewById(R.id.iv_bottom).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "image click ", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this,"Image Click",0).show();
 //            }
 //        });
     }

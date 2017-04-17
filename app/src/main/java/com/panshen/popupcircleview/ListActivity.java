@@ -25,11 +25,9 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listlayout);
         lv = (ListView) findViewById(R.id.lv);
-        for (int i = 0; i < 20; i++) {
-
+        for (int i = 0; i < 20; i++)
             list.add(new bean());
 
-        }
         lv.setAdapter(new adapter());
 
     }
@@ -68,42 +66,42 @@ public class ListActivity extends AppCompatActivity {
             vh.mIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ListActivity.this,"ImageClick",0).show();
+                    Toast.makeText(ListActivity.this, "ImageClick", 0).show();
                 }
             });
 
+            //按钮被选中回调
             vh.mPopupMenu.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
                 @Override
                 public void onMenuToggle(PopupButton popupButton, int index) {
-
-                    if(popupButton.getId()==R.id.pb_like){
+                    if (popupButton.getId() == R.id.pb_like) {
                         b.setLike(popupButton.isChecked());
-                    }else if(popupButton.getId()==R.id.pb_favorite){
+                    } else if (popupButton.getId() == R.id.pb_favorite) {
                         b.setFavorite(popupButton.isChecked());
-                    }else if(popupButton.getId()==R.id.pb_share){
+                    } else if (popupButton.getId() == R.id.pb_share) {
                         b.setShare(popupButton.isChecked());
                     }
-
                 }
             });
 
+            //按钮可用时的回调
             vh.mPopupMenu.setOnButtonPreparedListener(new PopupCircleView.OnButtonPreparedListener() {
                 @Override
                 public void onPrepared(ArrayList<PopupButton> bts) {
 
-                    for(PopupButton pb:bts){
-                        if(b.isLike())
-                            if(pb.getId()==R.id.pb_like){
+                    for (PopupButton pb : bts) {
+                        if (b.isLike())
+                            if (pb.getId() == R.id.pb_like) {
                                 pb.setChecked(true);
                             }
 
-                        if(b.isShare())
-                            if(pb.getId()==R.id.pb_share){
+                        if (b.isShare())
+                            if (pb.getId() == R.id.pb_share) {
                                 pb.setChecked(true);
                             }
 
-                        if(b.isFavorite())
-                            if(pb.getId()==R.id.pb_favorite){
+                        if (b.isFavorite())
+                            if (pb.getId() == R.id.pb_favorite) {
                                 pb.setChecked(true);
                             }
 
@@ -122,18 +120,13 @@ public class ListActivity extends AppCompatActivity {
     }
 
     class bean {
-        boolean like ;
-        boolean share ;
+        boolean like;
+        boolean share;
         boolean favorite;
 
         public bean() {
         }
 
-        public bean(boolean like, boolean share, boolean favorite) {
-            this.like = like;
-            this.share = share;
-            this.favorite = favorite;
-        }
 
         public boolean isLike() {
             return like;

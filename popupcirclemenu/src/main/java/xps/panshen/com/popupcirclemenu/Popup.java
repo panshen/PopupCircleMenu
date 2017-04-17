@@ -48,7 +48,6 @@ public class Popup extends RelativeLayout {
         mWindowCenterPoint = new Point(mRectWindowRange.centerX(), mRectWindowRange.centerY());
 
         mShadowView = new View(context);
-        mShadowView.setTag("mask");
         mShadowView.setBackgroundColor(Color.parseColor("#66000000"));
         mShadowView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(mShadowView);
