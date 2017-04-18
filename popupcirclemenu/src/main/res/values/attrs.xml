@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CircleMenu">
-        <attr name="radius" format="dimension|reference" />
-        <attr name="anim_duration" format="integer" />
-        <attr name="open_direction">
+        <attr name="radius" format="dimension|reference" /><!--menu的半径-->
+        <attr name="anim_duration" format="integer" /><!--menu展开的时间-->
+        <attr name="open_direction"><!--固定menu展开的方向-->
             <enum name="RIGHT" value="1" />
             <enum name="LEFT" value="2" />
         </attr>
@@ -11,11 +11,11 @@
     </declare-styleable>
 
     <declare-styleable name="CircleButton">
-        <attr name="pb_color" format="color|reference" />
-        <attr name="pb_color_checked" format="color|reference" />
-        <attr name="pb_background" format="reference" />
-        <attr name="pb_checkable" format="boolean" />
-        <attr name="pb_background_checked" format="reference" />
+        <attr name="pb_color" format="color|reference" /><!--button的颜色-->
+        <attr name="pb_color_checked" format="color|reference" /><!--button选中之后的颜色-->
+        <attr name="pb_background" format="reference" /><!--button的图片-->
+        <attr name="pb_background_checked" format="reference" /><!--button选中之后的图片-->
+        <attr name="pb_checkable" format="boolean" /><!--button是否可被勾选-->
     </declare-styleable>
 
 </resources>

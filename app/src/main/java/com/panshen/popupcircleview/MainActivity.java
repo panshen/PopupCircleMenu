@@ -2,11 +2,10 @@ package com.panshen.popupcircleview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Toast;
 
-import xps.panshen.com.popupcirclemenu.PopupButton;
-import xps.panshen.com.popupcirclemenu.PopupCircleView;
+import com.panshen.xps.popupcirclemenu.PopupButton;
+import com.panshen.xps.popupcirclemenu.PopupCircleView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,11 +15,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        findViewById(R.id.iv_1).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this,"Image Click",0).show();
-//            }
-//        });
+        ppView = (PopupCircleView) findViewById(R.id.pcv);
+        ppView.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
+            @Override
+            public void onMenuToggle(PopupButton popupButton, int index) {
+                if (popupButton.getId() == R.id.pb_fav) {
+
+                    if(!popupButton.isChecked()){
+                        Toast.makeText(MainActivity.this, "取消收藏", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(MainActivity.this, "收藏", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else if (popupButton.getId() == R.id.pb_thumbup) {
+                    Toast.makeText(MainActivity.this, "喜欢", Toast.LENGTH_SHORT).show();
+                } else if (popupButton.getId() == R.id.pb_share) {
+                    Toast.makeText(MainActivity.this, "分享", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

@@ -6,15 +6,14 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
-        app:cardCornerRadius="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        >
+        app:cardCornerRadius="5dp">
 
-        <xps.panshen.com.popupcirclemenu.PopupCircleView
+        <com.panshen.xps.popupcirclemenu.PopupCircleView
             android:id="@+id/PopupMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,13 +21,13 @@
             app:anim_duration="200"
             app:radius="100dp">
 
-            <xps.panshen.com.popupcirclemenu.PopupButton
+            <com.panshen.xps.popupcirclemenu.PopupButton
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 app:pb_color="#ffffff"
                 app:pb_color_checked="#FFEBEBEB" />
 
-            <xps.panshen.com.popupcirclemenu.PopupButton
+            <com.panshen.xps.popupcirclemenu.PopupButton
                 android:id="@+id/pb_like"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
@@ -36,16 +35,17 @@
                 app:pb_background_checked="@drawable/good_re"
                 app:pb_color_checked="#ff0000" />
 
-            <xps.panshen.com.popupcirclemenu.PopupButton
+            <com.panshen.xps.popupcirclemenu.PopupButton
                 android:id="@+id/pb_share"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 app:pb_background="@drawable/share"
+                app:pb_checkable="true"
                 app:pb_background_checked="@drawable/share_re"
                 app:pb_color="#ffffff"
                 app:pb_color_checked="#ff0000" />
 
-            <xps.panshen.com.popupcirclemenu.PopupButton
+            <com.panshen.xps.popupcirclemenu.PopupButton
                 android:id="@+id/pb_favorite"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
@@ -62,65 +62,66 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg" />
 
-        </xps.panshen.com.popupcirclemenu.PopupCircleView>
+        </com.panshen.xps.popupcirclemenu.PopupCircleView>
 
     </android.support.v7.widget.CardView>
 
     <RelativeLayout
-        android:layout_marginLeft="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp">
 
-        <xps.panshen.com.popupcirclemenu.PopupCircleView
+        <com.panshen.xps.popupcirclemenu.PopupCircleView
             android:id="@+id/PopupMenu_dot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:open_direction="RIGHT"
             app:anim_duration="200"
+            app:open_direction="RIGHT"
             app:radius="80dp">
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            app:pb_color="#ffffff"
-            app:pb_color_checked="#FFEBEBEB" />
+            <com.panshen.xps.popupcirclemenu.PopupButton
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                app:pb_color="#ffffff"
+                app:pb_color_checked="#FFEBEBEB" />
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
-            android:id="@+id/pb_like_dot"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            app:pb_background="@drawable/good"
-            app:pb_background_checked="@drawable/good_re"
-            app:pb_color="#ffffff"
-            app:pb_color_checked="#ff0000" />
+            <com.panshen.xps.popupcirclemenu.PopupButton
+                android:id="@+id/pb_like_dot"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                app:pb_background="@drawable/good"
+                app:pb_background_checked="@drawable/good_re"
+                app:pb_color="#ffffff"
+                app:pb_checkable="true"
+                app:pb_color_checked="#ff0000" />
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
-            android:id="@+id/pb_share_dot"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            app:pb_background="@drawable/share"
-            app:pb_background_checked="@drawable/share_re"
-            app:pb_color="#ffffff"
-            app:pb_color_checked="#ff0000" />
+            <com.panshen.xps.popupcirclemenu.PopupButton
+                android:id="@+id/pb_share_dot"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                app:pb_background="@drawable/share"
+                app:pb_background_checked="@drawable/share_re"
+                app:pb_color="#ffffff"
+                app:pb_color_checked="#ff0000" />
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
-            android:id="@+id/pb_favorite_dot"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            app:pb_background="@drawable/favorite"
-            app:pb_background_checked="@drawable/favorite_re"
-            app:pb_color="#ffffff"
-            app:pb_color_checked="#ff0000" />
+            <com.panshen.xps.popupcirclemenu.PopupButton
+                android:id="@+id/pb_favorite_dot"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                app:pb_background="@drawable/favorite"
+                app:pb_background_checked="@drawable/favorite_re"
+                app:pb_color="#ffffff"
+                app:pb_color_checked="#ff0000" />
 
-        <ImageView
-            android:id="@+id/iv_dot"
-            android:padding="12dp"
-            android:src="@drawable/dots"
-            android:layout_width="55dp"
-            android:layout_height="55dp" />
+            <ImageView
+                android:id="@+id/iv_dot"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="12dp"
+                android:src="@drawable/dots" />
 
-        </xps.panshen.com.popupcirclemenu.PopupCircleView>
+        </com.panshen.xps.popupcirclemenu.PopupCircleView>
 
     </RelativeLayout>
 

@@ -11,22 +11,19 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <activity android:name="com.panshen.popupcircleview.LauncherActivity">
-
         </activity>
 
         <activity android:name="com.panshen.popupcircleview.ListActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity
             android:exported="true"
-            android:name="com.panshen.popupcircleview.MainActivity"></activity>
+            android:name="com.panshen.popupcircleview.MainActivity"/>
 
     </application>
 

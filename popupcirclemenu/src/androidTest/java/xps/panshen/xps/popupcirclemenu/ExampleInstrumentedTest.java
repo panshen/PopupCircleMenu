@@ -1,4 +1,4 @@
-package xps.panshen.com.popupcirclemenu;
+package xps.panshen.xps.popupcirclemenu;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,4 +1,4 @@
-package xps.panshen.com.popupcirclemenu;
+package com.panshen.xps.popupcirclemenu;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+
+import xps.panshen.xps.popupcirclemenu.R;
 
 
 public class PopupCircleView extends RelativeLayout implements Handler.Callback {
@@ -57,7 +59,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
         if (this.onButtonPreparedListener == null) {
             this.onButtonPreparedListener = onButtonPreparedListener;
         } else {
-            resetbutton();
+            resetButton();
             onButtonPreparedListener.onPrepared(mButtons);
         }
     }
@@ -135,6 +137,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
                 mPopup.setShadowViewAlpha(Float.valueOf(animation.getAnimatedValue() + ""));
             }
         });
+
         addOnLayoutChangeListener(new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -145,7 +148,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
         });
     }
 
-    void resetbutton() {
+    void resetButton() {
         for (PopupButton pb : mButtons) {
             pb.setChecked(false);
         }
@@ -214,7 +217,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
                  * 主动清除勾选状态 防止View被复用时状态错乱
                  * */
                 if (mOnMenuEventListener == null)
-                    resetbutton();
+                    resetButton();
 
                 MotionEvent newEv = (MotionEvent) msg.obj;
                 isshowing = true;

@@ -1,4 +1,4 @@
-package xps.panshen.com.popupcirclemenu;
+package xps.panshen.xps.popupcirclemenu;
 
 import org.junit.Test;
 

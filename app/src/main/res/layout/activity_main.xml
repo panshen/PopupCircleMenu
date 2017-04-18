@@ -6,28 +6,33 @@
     android:padding="10dp"
     android:layout_height="match_parent">
 
-    <xps.panshen.com.popupcirclemenu.PopupCircleView
+    <com.panshen.xps.popupcirclemenu.PopupCircleView
+        android:id="@+id/pcv"
+        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         app:anim_duration="200"
         app:radius="100dp">
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
+        <com.panshen.xps.popupcirclemenu.PopupButton
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_color="#ffffff"
             app:pb_color_checked="#FFEBEBEB" />
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
+        <com.panshen.xps.popupcirclemenu.PopupButton
+            android:id="@+id/pb_thumbup"
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_background="@drawable/good"
             app:pb_background_checked="@drawable/good_re"
             app:pb_color="#ffffff"
+
             app:pb_color_checked="#ff0000" />
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
+        <com.panshen.xps.popupcirclemenu.PopupButton
+            android:id="@+id/pb_share"
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_background="@drawable/share"
@@ -35,12 +40,14 @@
             app:pb_color="#ffffff"
             app:pb_color_checked="#ff0000" />
 
-        <xps.panshen.com.popupcirclemenu.PopupButton
+        <com.panshen.xps.popupcirclemenu.PopupButton
+            android:id="@+id/pb_fav"
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_background="@drawable/favorite"
             app:pb_background_checked="@drawable/favorite_re"
             app:pb_color="#ffffff"
+            app:pb_checkable="true"
             app:pb_color_checked="#ff0000" />
 
         <ImageView
@@ -51,6 +58,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/bg" />
 
-    </xps.panshen.com.popupcirclemenu.PopupCircleView>
+    </com.panshen.xps.popupcirclemenu.PopupCircleView>
 
 </RelativeLayout>

@@ -10,11 +10,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-
-import xps.panshen.com.popupcirclemenu.PopupButton;
-import xps.panshen.com.popupcirclemenu.PopupCircleView;
+import com.panshen.xps.popupcirclemenu.PopupButton;
+import com.panshen.xps.popupcirclemenu.PopupCircleView;
 
 public class ListActivity extends AppCompatActivity {
     ListView lv;
@@ -66,7 +64,7 @@ public class ListActivity extends AppCompatActivity {
             vh.mIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ListActivity.this, "ImageClick", 0).show();
+                    Toast.makeText(ListActivity.this, "Image Click", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -88,7 +86,6 @@ public class ListActivity extends AppCompatActivity {
             vh.mPopupMenu.setOnButtonPreparedListener(new PopupCircleView.OnButtonPreparedListener() {
                 @Override
                 public void onPrepared(ArrayList<PopupButton> bts) {
-
                     for (PopupButton pb : bts) {
                         if (b.isLike())
                             if (pb.getId() == R.id.pb_like) {
@@ -119,7 +116,7 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
-    class bean {
+   private class bean {
         boolean like;
         boolean share;
         boolean favorite;
