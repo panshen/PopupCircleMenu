@@ -213,7 +213,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
                 /**
                  * 如果没有设置回调代表不关心勾选状态
-                 * 主动清除勾选状态 防止View被复用时状态错乱
+                 * 清除勾选状态 防止View被复用时状态错乱
                  * */
                 if (mOnMenuEventListener == null)
                     resetButton();
