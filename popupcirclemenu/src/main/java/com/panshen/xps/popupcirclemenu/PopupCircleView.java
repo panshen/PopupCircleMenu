@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
-import xps.panshen.xps.popupcirclemenu.R;
 
 
 public class PopupCircleView extends RelativeLayout implements Handler.Callback {

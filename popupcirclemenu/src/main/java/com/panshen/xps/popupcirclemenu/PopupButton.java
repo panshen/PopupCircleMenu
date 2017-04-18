@@ -20,9 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import xps.panshen.xps.popupcirclemenu.R;
-
-
 public class PopupButton extends View {
     private final String TAG = this.getClass().getName();
     private Bitmap mBitmap;
