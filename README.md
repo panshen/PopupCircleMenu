@@ -145,8 +145,8 @@ name | format | description
  open_direction| enum          |  固定菜单展开的方向 |
 
 #PopupButton 
-  name          | format      | description 
- ------------- |-------------| -----
+ name | format | description 
+--- |----------| ---
  pb_color      | color/reference | 按钮的颜色 
  pb_color_checked| color/reference      |  按钮被选中时的颜色 
  pb_background | reference      |     按钮的图片 
