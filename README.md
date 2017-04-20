@@ -2,7 +2,7 @@ PopupCircleMenu
 =====================
 模仿花瓣APP的弹出式菜单
 ---------------------
-![](https://github.com/panshen/PopupCircleMenu/blob/master/preview.gif)
+点击查看 [演示](https://github.com/panshen/PopupCircleMenu/blob/master/preview.gif)
 
 ### Gradle
 ```
