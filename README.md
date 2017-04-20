@@ -143,6 +143,7 @@ name | format | description
  open_direction| enum          |  固定菜单展开的方向 |
 
 #PopupButton 
+
 name | format | description 
 --- |----------| ---
  radius        | dimension     |  菜单的半径  |
