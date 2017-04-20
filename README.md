@@ -147,11 +147,11 @@ name | format | description
 #PopupButton 
  name | format | description 
 --- |----------| ---
- pb_color      | color/reference | 按钮的颜色 
- pb_color_checked| color/reference      |  按钮被选中时的颜色 
- pb_background | reference      |     按钮的图片 
- pb_background_checked | reference      |     按钮被选中时的图片 
- pb_checkable      | boolean | 是否可被选中(默认false) 
+ pb_color      | color/reference | 按钮的颜色 |
+ pb_color_checked| color/reference      |  按钮被选中时的颜色 |
+ pb_background | reference      |     按钮的图片 |
+ pb_background_checked | reference      |     按钮被选中时的图片 |
+ pb_checkable      | boolean | 是否可被选中(默认false) |
 
 
 
