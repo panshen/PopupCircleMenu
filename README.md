@@ -140,7 +140,7 @@ feature | desc | verify
 --- |----------| ---
 
  name          | format        | description  
- ------------- |-------------| -----       
+--- |----------| ---    
  radius        | dimension     |  菜单的半径  
  anim_duration | integer       |  菜单动画的时间 
  open_direction| enum          |  固定菜单展开的方向 
