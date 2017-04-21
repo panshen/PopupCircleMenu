@@ -22,13 +22,24 @@ PopupCircleMenu
 	
 ```
 
+### Note:
+>主要有两个类 PopupCircleView 负责控制每个按钮的行为，支持自定义展开动画时间、
+>展开半径、展开方向(左右或者任意角度，默认任意角度。如果指定了，菜单展开的中心就会固定为View的中心)
+
+>PopupButton就是弹出了按钮了 支持自定义颜色，图片资源等，见下表。
+
+>PopupCircleView 里的第一个PopupButton作为中心按钮 可以不放图片资源
+
+>PopupCircleView 在被单击时会触发最后一个View的onClick()
+
+
 ### Usage
 
 ```
  PopupCircleView ppView;
         .....
-        //按钮被选中的回调
-         ppView.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
+        //按钮被选中的回调 在这里获取某按钮勾选状态
+         ppView.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
             @Override
             public void onMenuToggle(PopupButton popupButton, int index) {
                 if (popupButton.getId() == R.id.pb_fav) {
@@ -41,8 +52,8 @@ PopupCircleMenu
             }
         });
         
-        //按钮可用时的回调
-            ppView.setOnButtonPreparedListener(new PopupCircleView.OnButtonPreparedListener() {
+        //按钮可用时的回调 在这里更改按钮勾选状态
+            ppView.setOnButtonPreparedListener(new PopupCircleView.OnButtonPreparedListener() {
                 @Override
                 public void onPrepared(ArrayList<PopupButton> bts) {
                     for (PopupButton pb : bts) {
@@ -122,17 +133,6 @@ public interface OnButtonPreparedListener {
     }
     
 ```
-
-### Note:
-
-
->PopupCircleView 里的第一个PopupButton作为中心按钮 可以不放图片资源
-
->PopupCircleView 在被单击时会触发最后一个View的onClick()
-
-
-
- 
 
 ### Attributes
 #PopupCircleView 
