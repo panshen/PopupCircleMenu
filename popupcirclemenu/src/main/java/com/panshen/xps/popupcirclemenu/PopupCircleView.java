@@ -100,6 +100,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
         removeViews(0, getChildCount() - 1);
         mPopup.setbts(mButtons);
+
     }
 
     /**
