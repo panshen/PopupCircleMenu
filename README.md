@@ -24,13 +24,37 @@ PopupCircleMenu
 
 ### Note:
 >主要有两个类 PopupCircleView 负责控制每个按钮的行为，支持自定义展开动画时间、
->展开半径、展开方向(左右或者任意角度，默认任意角度。如果指定了，菜单展开的中心就会固定为View的中心)
-
->PopupButton就是弹出了按钮了 支持自定义颜色，图片资源等，见下表。
+>展开半径、展开方向。
+>展开方向可以指定左右或任意角度，默认任意角度。
+>如果指定了，菜单展开的中心就会固定为View的中心
 
 >PopupCircleView 里的第一个PopupButton作为中心按钮 可以不放图片资源
 
 >PopupCircleView 在被单击时会触发最后一个View的onClick()
+
+>PopupButton就是弹出了按钮了 支持自定义颜色，图片资源等，见下表。
+
+
+
+### Attributes
+#PopupCircleView 
+
+name | format | description 
+--- |----------| ---
+ radius        | dimension     |  菜单的半径  |
+ anim_duration | integer       |  菜单动画的时间 |
+ open_direction| enum          |  固定菜单展开的方向 |
+
+#PopupButton 
+
+name | format | description 
+--- |----------| ---
+ |pb_color        | color/reference     |  按钮的颜色  |
+ | pb_color_checked| color/reference      |  按钮被选中时的颜色 |
+| pb_background | reference      |     按钮的图片 |
+| pb_background_checked | reference      |     按钮被选中时的图片 |
+| pb_checkable      | boolean | 是否可被选中(默认false) |
+
 
 
 ### Usage
@@ -133,25 +157,6 @@ public interface OnButtonPreparedListener {
     }
     
 ```
-
-### Attributes
-#PopupCircleView 
-
-name | format | description 
---- |----------| ---
- radius        | dimension     |  菜单的半径  |
- anim_duration | integer       |  菜单动画的时间 |
- open_direction| enum          |  固定菜单展开的方向 |
-
-#PopupButton 
-
-name | format | description 
---- |----------| ---
- |pb_color        | color/reference     |  按钮的颜色  |
- | pb_color_checked| color/reference      |  按钮被选中时的颜色 |
-| pb_background | reference      |     按钮的图片 |
-| pb_background_checked | reference      |     按钮被选中时的图片 |
-| pb_checkable      | boolean | 是否可被选中(默认false) |
 
 
 
