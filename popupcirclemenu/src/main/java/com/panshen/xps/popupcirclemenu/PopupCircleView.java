@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -102,12 +103,15 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
     }
 
+    /**
+     * @return Point  View在此window的中心坐标
+     * */
     private Point getViewCenterPoint() {
-        Rect r = new Rect();
-        Point p = new Point();
-        getGlobalVisibleRect(r);
-        p.set(r.centerX(), r.centerY());
-        return p;
+        Point centerPoint = new Point();
+        int[] location = new int[2];
+        getLocationInWindow(location);
+        centerPoint.set(location[0]+getWidth()/2, location[1]+getWidth()/2);
+        return centerPoint;
     }
 
     private void initDefaultParam() {
@@ -145,6 +149,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
                     onButtonPreparedListener.onPrepared(mButtons);
             }
         });
+
     }
 
     void resetButton() {
@@ -252,6 +257,11 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     }
 
     public interface OnMenuEventListener {
+        /**
+         *
+         * @param  popupButton 被触发的按钮
+         * @param index 被触发按钮的index
+         * */
         void onMenuToggle(PopupButton popupButton, int index);
     }
 
