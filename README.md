@@ -2,8 +2,8 @@ PopupCircleMenu
 =====================
 模仿Tumblr的弹出式菜单
 ---------------------
-点击查看 [演示](https://github.com/panshen/PopupCircleMenu/blob/master/preview.gif)
 
+![PREVIEW](https://github.com/panshen/PopupCircleMenu/blob/master/preview-1.gif)
 ### Gradle
 ```
 
@@ -30,9 +30,9 @@ PopupCircleMenu
 
 >PopupCircleView 里的第一个PopupButton作为中心按钮 可以不放图片资源
 
->PopupCircleView 在被单击时会触发最后一个View的onClick()
+>PopupCircleView 在被单击时会触发最后一个ChildView的onClick()
 
->PopupButton就是弹出了按钮了 支持自定义颜色，图片资源等，见下表。
+>PopupButton为弹出的按钮 支持自定义颜色，图片资源等，见下表。
 
 
 
