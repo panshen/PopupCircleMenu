@@ -287,7 +287,6 @@ public class PopupButton extends View {
 
     private void unCheck() {
         if (mBackground == null) return;
-
         mBitmap = Bitmap.createScaledBitmap(mBackground, mCircleRadius, mCircleRadius, true);
         mPaint.setColor(mColorNormal);
         invalidate();

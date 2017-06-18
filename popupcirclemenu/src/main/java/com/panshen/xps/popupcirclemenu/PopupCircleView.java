@@ -20,8 +20,6 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
-
-
 public class PopupCircleView extends RelativeLayout implements Handler.Callback {
     private String TAG = getClass().getName();
     private Activity mContext;
@@ -84,7 +82,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
     void initButtons() {
         if (!(getChildCount() >= 1)) {
-            throw new RuntimeException("you mast add at least one childView");
+            throw new RuntimeException("You mast add at least one ChildView");
         }
 
         View view = getChildAt(getChildCount() - 1);

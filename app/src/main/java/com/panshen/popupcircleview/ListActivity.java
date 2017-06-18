@@ -27,7 +27,6 @@ public class ListActivity extends AppCompatActivity {
             list.add(new bean());
 
         lv.setAdapter(new adapter());
-
     }
 
     private class adapter extends BaseAdapter {
@@ -123,7 +122,6 @@ public class ListActivity extends AppCompatActivity {
 
         public bean() {
         }
-
 
         public boolean isLike() {
             return like;
