@@ -1,9 +1,11 @@
 PopupCircleMenu
 =====================
-模仿Tumblr的弹出式菜单
+模仿花瓣的弹出式菜单
 ---------------------
 
 ![PREVIEW](https://github.com/panshen/PopupCircleMenu/blob/master/preview-1.gif)
+![PREVIEW](https://github.com/panshen/PopupCircleMenu/blob/master/screenshot_like.png)
+![PREVIEW](https://github.com/panshen/PopupCircleMenu/blob/master/screenshot_dislike.png)
 ### Gradle
 ```
 
@@ -21,6 +23,11 @@ PopupCircleMenu
 	}
 	
 ```
+
+### Update:07/7/2017
+>新增: 支持设置Button的开关文字  对应Attribute pb_text_on / pb_text_off 
+
+
 
 ### Note:
 >主要有两个类 PopupCircleView 负责控制每个按钮的行为，支持自定义展开动画时间、
@@ -41,14 +48,16 @@ PopupCircleMenu
 
 name | format | description 
 --- |----------| ---
- radius        | dimension     |  菜单的半径  |
- anim_duration | integer       |  菜单动画的时间 |
- open_direction| enum          |  固定菜单展开的方向 |
+ pc_radius        | dimension     |  菜单的半径  |
+ pc_anim_duration | integer       |  菜单动画的时间 |
+ pc_open_direction| enum          |  固定菜单展开的方向 |
 
 #PopupButton 
 
 name | format | description 
 --- |----------| ---
+|pb_text_on        | string     |  按钮勾选时的文字  |
+|pb_text_off        | string     |  按钮未勾选时的文字  |
  |pb_color        | color/reference     |  按钮的颜色  |
  | pb_color_checked| color/reference      |  按钮被选中时的颜色 |
 | pb_background | reference      |     按钮的图片 |
