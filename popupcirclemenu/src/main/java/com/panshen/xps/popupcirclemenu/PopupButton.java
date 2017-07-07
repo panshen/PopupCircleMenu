@@ -15,41 +15,41 @@ import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 public class PopupButton extends View {
-    private final String TAG = this.getClass().getName();
-    private Bitmap mBitmap;
-    private Paint mPaint = new Paint();
-    private int mWidth;
-    private int mMargin;
-    private int mCircleRadius;
+    final String TAG = this.getClass().getName();
+    Bitmap mBitmap;
+    Paint mPaint = new Paint();
+    int mWidth;
+    int mMargin;
+    int mCircleRadius;
     public int x;
     public int y;
-    private Rect mRect = new Rect();
-    private boolean outanimating;
-    private boolean inanimating;
-    private BUTTON_STATE mButtonState = BUTTON_STATE.NORMAL;
-    private ValueAnimator inanim;
-    private ValueAnimator outanim;
-    private ValueAnimator mAnimeExplode;
+    Rect mRect = new Rect();
+    boolean outanimating;
+    boolean inanimating;
+    BUTTON_STATE mButtonState = BUTTON_STATE.NORMAL;
+    ValueAnimator inanim;
+    ValueAnimator outanim;
+    ValueAnimator mAnimeExplode;
+    Path mPathExplode = new Path();
+    PathMeasure mPathMeasureExplode = new PathMeasure();
+    boolean isExploded;
 
-    private Path mPathExplode = new Path();
-    private PathMeasure mPathMeasureExplode = new PathMeasure();
-    boolean isExplodedEnd;
-
-    //----------------------
-    private int mColorNormal;
-    private int mColorChecked;
-    private Bitmap mBackgroundChecked;
-    private Bitmap mBackground;
-    private boolean mChecked;
-    private boolean mCheckable;
-    private int mAnimDuration;
-    //----------------------
+    int mColorNormal;
+    int mColorChecked;
+    Bitmap mBackgroundChecked;
+    Bitmap mBackground;
+    boolean mChecked;
+    boolean mCheckable;
+    int mAnimDuration;
+    String mTextOn;
+    String mTextOff;
 
     public Path getmPathExplode() {
         mPathExplode.reset();
@@ -58,6 +58,18 @@ public class PopupButton extends View {
 
     public void setmAnimDuration(int duration) {
         mAnimDuration = duration;
+    }
+
+    /**
+     * @return  根据button的勾选状态
+     *          返回相应的文字
+     * */
+    public String getCurrentText() {
+        if (!TextUtils.isEmpty(mTextOff) && !TextUtils.isEmpty(mTextOn)) {
+            if (isChecked()) return mTextOff;
+            else return mTextOn;
+        }else return "-1";
+
     }
 
     public PopupButton(Context context, AttributeSet attrs) {
@@ -72,10 +84,12 @@ public class PopupButton extends View {
         init();
     }
 
-    private void initCofig(Context context, AttributeSet attrs) {
+    void initCofig(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleButton);
         mColorNormal = a.getColor(R.styleable.CircleButton_pb_color, Color.parseColor("#ffffff"));
         mColorChecked = a.getColor(R.styleable.CircleButton_pb_color_checked, Color.parseColor("#FFFF000D"));
+        mTextOn = a.getString(R.styleable.CircleButton_pb_text_on);
+        mTextOff = a.getString(R.styleable.CircleButton_pb_text_off);
         BitmapDrawable bdmBackgroundChecked = (BitmapDrawable) a.getDrawable(R.styleable.CircleButton_pb_background_checked);
         mCheckable = a.getBoolean(R.styleable.CircleButton_pb_checkable, false);
 
@@ -89,7 +103,7 @@ public class PopupButton extends View {
         a.recycle();
     }
 
-    private void init() {
+    void init() {
         inanim = ValueAnimator.ofFloat(1.0f, 1.1f);
         inanim.setDuration(100);
         inanim.setInterpolator(new LinearInterpolator());
@@ -106,7 +120,6 @@ public class PopupButton extends View {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 inanimating = false;
-
             }
 
             @Override
@@ -214,7 +227,7 @@ public class PopupButton extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                isExplodedEnd = true;
+                isExploded = true;
             }
         });
         mAnimeExplode.start();
@@ -224,22 +237,22 @@ public class PopupButton extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
+        int x = (int) event.getRawX();
+        int y = (int) event.getRawY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 setScaleX(1f);
                 setScaleY(1f);
-                isExplodedEnd = false;
+                isExploded = false;
 
-                if(!mCheckable){
+                if (!mCheckable) {
                     mChecked = false;
                 }
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                int x = (int) event.getRawX();
-                int y = (int) event.getRawY();
                 getHitRect(mRect);
-                if (isExplodedEnd)
+                if (isExploded)
                     if (mRect.contains(x, y)) {
                         if (mButtonState.equals(BUTTON_STATE.NORMAL) && !inanimating) {
                             inanim.start();
@@ -267,7 +280,11 @@ public class PopupButton extends View {
         return super.onTouchEvent(event);
     }
 
-    private  void toggleCheck() {
+    public boolean isExploded(){
+        return isExploded;
+    }
+
+    void toggleCheck() {
         if (isChecked()) {
             unCheck();
             setChecked(false);
@@ -277,15 +294,14 @@ public class PopupButton extends View {
         }
     }
 
-    private  void check() {
+    void check() {
         if (mBackgroundChecked == null) return;
-            mBitmap = Bitmap.createScaledBitmap(mBackgroundChecked, mCircleRadius, mCircleRadius, true);
-            mPaint.setColor(mColorChecked);
-            invalidate();
-
+        mBitmap = Bitmap.createScaledBitmap(mBackgroundChecked, mCircleRadius, mCircleRadius, true);
+        mPaint.setColor(mColorChecked);
+        invalidate();
     }
 
-    private void unCheck() {
+    void unCheck() {
         if (mBackground == null) return;
         mBitmap = Bitmap.createScaledBitmap(mBackground, mCircleRadius, mCircleRadius, true);
         mPaint.setColor(mColorNormal);

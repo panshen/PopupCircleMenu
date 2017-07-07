@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CircleMenu">
-        <attr name="radius" format="dimension|reference" />
-        <attr name="anim_duration" format="integer" />
-        <attr name="open_direction">
+        <attr name="pc_radius" format="dimension|reference" />
+        <attr name="pc_anim_duration" format="integer" />
+        <attr name="pc_open_direction">
             <enum name="RIGHT" value="1" />
             <enum name="LEFT" value="2" />
         </attr>
@@ -11,6 +11,8 @@
     </declare-styleable>
 
     <declare-styleable name="CircleButton">
+        <attr name="pb_text_on" format="string"/>
+        <attr name="pb_text_off" format="string"/>
         <attr name="pb_color" format="color|reference" />
         <attr name="pb_color_checked" format="color|reference" />
         <attr name="pb_background" format="reference" />

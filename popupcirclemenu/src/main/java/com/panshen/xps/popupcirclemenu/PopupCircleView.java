@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 public class PopupCircleView extends RelativeLayout implements Handler.Callback {
     private String TAG = getClass().getName();
     private Activity mContext;
-    private Popup mPopup;
+    private PopupLayer mPopup;
     private Rect mTriggerRect;
     private ViewGroup mDecorView;
     private LayoutParams mLayoutParams;
@@ -32,7 +31,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     private OnMenuEventListener mOnMenuEventListener;
     private OnButtonPreparedListener onButtonPreparedListener;
 
-    private static boolean isshowing;
+    protected static boolean isshowing;
     private static final int ACTION_DOWN = 0;
     private static final int ACTION_UP = 1;
 
@@ -70,10 +69,10 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CircleMenu, 0, 0);
         initDefaultParam();
 
-        mRadius = a.getDimensionPixelSize(R.styleable.CircleMenu_radius, (int) TypedValue.applyDimension(
+        mRadius = a.getDimensionPixelSize(R.styleable.CircleMenu_pc_radius, (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics()));
-        mAnimDuration = a.getInt(R.styleable.CircleMenu_anim_duration, 250);
-        mOpenDirection = a.getInt(R.styleable.CircleMenu_open_direction, UNDEFIEN);
+        mAnimDuration = a.getInt(R.styleable.CircleMenu_pc_anim_duration, 250);
+        mOpenDirection = a.getInt(R.styleable.CircleMenu_pc_open_direction, UNDEFIEN);
 
         a.recycle();
         init();
@@ -126,7 +125,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
         mLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mDecorView = (ViewGroup) mContext.getWindow().getDecorView();
 
-        mPopup = new Popup(mContext, mRadius);
+        mPopup = new PopupLayer(mContext, mRadius);
         mPopup.setVisibility(INVISIBLE);
         mAlphAnimator = new ValueAnimator();
         mAlphAnimator.setFloatValues(0.0f, 1.0f);
@@ -150,6 +149,8 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
     }
 
+    /**清除勾选状态
+     * */
     void resetButton() {
         for (PopupButton pb : mButtons) {
             pb.setChecked(false);
@@ -159,11 +160,12 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         int action = ev.getAction();
+        int downX = (int) ev.getRawX();
+        int downY = (int) ev.getRawY();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                int downX = (int) ev.getRawX();
-                int downY = (int) ev.getRawY();
+
 
                 if (isshowing) {
                     return false;
@@ -216,7 +218,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
                 /**
                  * 如果没有设置回调代表不关心勾选状态
-                 * 清除勾选状态 防止View被复用时状态错乱
+                 * 在这里清除勾选状态 防止View被复用时状态错乱
                  * */
                 if (mOnMenuEventListener == null)
                     resetButton();
@@ -243,7 +245,7 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             mAbleToggle = false;
             getParent().requestDisallowInterceptTouchEvent(false);
             if (juageCallback()) {
-                mOnMenuEventListener.onMenuToggle(mButtons.get(mPopup.getmSelectedIndex() - 1), mPopup.getmSelectedIndex());
+                mOnMenuEventListener.onMenuToggle(mButtons.get(mPopup.getSelectedIndex()));
             }
         }
         return false;
@@ -256,14 +258,21 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
 
     public interface OnMenuEventListener {
         /**
+         * 在按钮被选中/取消选中时回调
+         *
+         * Call when the button are check/uncheck
          *
          * @param  popupButton 被触发的按钮
-         * @param index 被触发按钮的index
          * */
-        void onMenuToggle(PopupButton popupButton, int index);
+        void onMenuToggle(PopupButton popupButton);
     }
 
     public interface OnButtonPreparedListener {
+        /**
+         * 当按钮初始化完成时回调
+         *
+         * Call when the buttons are first Prepared
+         * */
         void onPrepared(ArrayList<PopupButton> bts);
     }
 

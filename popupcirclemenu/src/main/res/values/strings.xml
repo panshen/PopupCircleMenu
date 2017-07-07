@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PopupCircleMenu</string>
+    <item type="id" name="view_view"></item>
 </resources>

@@ -3,33 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent_re"
     android:layout_width="match_parent"
-    android:padding="10dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="10dp">
 
     <com.panshen.xps.popupcirclemenu.PopupCircleView
         android:id="@+id/pcv"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        app:anim_duration="200"
-        app:radius="100dp">
+        app:pc_anim_duration="200"
+        app:pc_radius="100dp">
 
         <com.panshen.xps.popupcirclemenu.PopupButton
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_color="#ffffff"
-            app:pb_color_checked="#FFEBEBEB" />
+            app:pb_color_checked="#FFEBEBEB"
+            app:pb_text_on="第一个" />
 
         <com.panshen.xps.popupcirclemenu.PopupButton
-            android:id="@+id/pb_thumbup"
+            android:id="@+id/pb_like"
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_background="@drawable/good"
             app:pb_background_checked="@drawable/good_re"
+            app:pb_checkable="true"
             app:pb_color="#ffffff"
-
-            app:pb_color_checked="#ff0000" />
+            app:pb_color_checked="#ff0000"
+            app:pb_text_off="取消赞"
+            app:pb_text_on="点赞" />
 
         <com.panshen.xps.popupcirclemenu.PopupButton
             android:id="@+id/pb_share"
@@ -37,18 +40,23 @@
             android:layout_height="55dp"
             app:pb_background="@drawable/share"
             app:pb_background_checked="@drawable/share_re"
+            app:pb_checkable="false"
             app:pb_color="#ffffff"
-            app:pb_color_checked="#ff0000" />
+            app:pb_color_checked="#ff0000"
+            app:pb_text_off="分享"
+            app:pb_text_on="分享" />
 
         <com.panshen.xps.popupcirclemenu.PopupButton
-            android:id="@+id/pb_fav"
+            android:id="@+id/pb_favorite"
             android:layout_width="55dp"
             android:layout_height="55dp"
             app:pb_background="@drawable/favorite"
             app:pb_background_checked="@drawable/favorite_re"
-            app:pb_color="#ffffff"
             app:pb_checkable="true"
-            app:pb_color_checked="#ff0000" />
+            app:pb_color="#ffffff"
+            app:pb_color_checked="#ff0000"
+            app:pb_text_off="取消收藏"
+            app:pb_text_on="收藏" />
 
         <ImageView
             android:id="@+id/iv_1"
@@ -59,5 +67,6 @@
             android:src="@drawable/bg" />
 
     </com.panshen.xps.popupcirclemenu.PopupCircleView>
+
 
 </RelativeLayout>

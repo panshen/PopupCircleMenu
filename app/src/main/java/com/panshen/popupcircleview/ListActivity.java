@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
+
 import com.panshen.xps.popupcirclemenu.PopupButton;
 import com.panshen.xps.popupcirclemenu.PopupCircleView;
 
@@ -23,10 +24,18 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listlayout);
         lv = (ListView) findViewById(R.id.lv);
+
+        //模拟初始化数据--------------------------------------------------
         for (int i = 0; i < 20; i++)
             list.add(new bean());
 
+        list.get(1).setLike(true);//勾选第二条的喜欢和收藏按钮
+        list.get(1).setFavorite(true);
+
+        list.get(2).setLike(true);//勾选第三条的喜欢按钮
+
         lv.setAdapter(new adapter());
+        //结束初始化数据--------------------------------------------------
     }
 
     private class adapter extends BaseAdapter {
@@ -67,41 +76,51 @@ public class ListActivity extends AppCompatActivity {
                 }
             });
 
-            //按钮被选中回调
+            /**
+             * 按钮被选中时的回调
+             * */
             vh.mPopupMenu.setmOnMenuEventListener(new PopupCircleView.OnMenuEventListener() {
                 @Override
-                public void onMenuToggle(PopupButton popupButton, int index) {
-                    if (popupButton.getId() == R.id.pb_like) {
-                        b.setLike(popupButton.isChecked());
-                    } else if (popupButton.getId() == R.id.pb_favorite) {
-                        b.setFavorite(popupButton.isChecked());
-                    } else if (popupButton.getId() == R.id.pb_share) {
-                        b.setShare(popupButton.isChecked());
+                public void onMenuToggle(PopupButton popupButton) {
+
+                    switch(popupButton.getId()){
+                        case R.id.pb_like:
+                            b.setLike(popupButton.isChecked());
+                            break;
+                        case R.id.pb_favorite:
+                            b.setFavorite(popupButton.isChecked());
+                            break;
+                        case R.id.pb_share:
+                            b.setShare(popupButton.isChecked());
+                            break;
                     }
+
                 }
             });
 
-            //按钮可用时的回调
+            /**
+             *在这里初始化按钮的勾选状态
+             *you can initialize buttons check states here
+             * */
             vh.mPopupMenu.setOnButtonPreparedListener(new PopupCircleView.OnButtonPreparedListener() {
                 @Override
                 public void onPrepared(ArrayList<PopupButton> bts) {
+
                     for (PopupButton pb : bts) {
-                        if (b.isLike())
+                        if (b.isLiked())
                             if (pb.getId() == R.id.pb_like) {
                                 pb.setChecked(true);
                             }
-
-                        if (b.isShare())
+                        if (b.isShared())
                             if (pb.getId() == R.id.pb_share) {
                                 pb.setChecked(true);
                             }
-
                         if (b.isFavorite())
                             if (pb.getId() == R.id.pb_favorite) {
                                 pb.setChecked(true);
                             }
-
                     }
+
                 }
             });
 
@@ -123,7 +142,7 @@ public class ListActivity extends AppCompatActivity {
         public bean() {
         }
 
-        public boolean isLike() {
+        public boolean isLiked() {
             return like;
         }
 
@@ -131,7 +150,7 @@ public class ListActivity extends AppCompatActivity {
             this.like = like;
         }
 
-        public boolean isShare() {
+        public boolean isShared() {
             return share;
         }
 
