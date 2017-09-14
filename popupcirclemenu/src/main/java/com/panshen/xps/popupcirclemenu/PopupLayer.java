@@ -68,12 +68,16 @@ public class PopupLayer extends RelativeLayout {
         mButtons = bts;
         for (int i = 0; i < mButtons.size(); i++) {
             PopupButton pb = mButtons.get(i);
+            if(pb.getParent()!=null&&pb.getParent()==this)
+                continue;
+
             TextLableView tv = new TextLableView(mContext);
 
             if (i == 0)//用来标记中间按钮对应的TextView 在layout时过滤掉
                 tv.setTag(String.valueOf(Integer.MAX_VALUE));
 
             tv.setText(pb.getCurrentText());
+
             addView(pb);
             addView(tv);
             kvs.put(pb, tv);
@@ -86,6 +90,10 @@ public class PopupLayer extends RelativeLayout {
         invalidate();
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+    }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {

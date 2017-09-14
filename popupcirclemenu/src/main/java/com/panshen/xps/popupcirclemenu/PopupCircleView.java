@@ -259,9 +259,6 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     public interface OnMenuEventListener {
         /**
          * 在按钮被选中/取消选中时回调
-         *
-         * Call when the button are check/uncheck
-         *
          * @param  popupButton 被触发的按钮
          * */
         void onMenuToggle(PopupButton popupButton);
@@ -270,8 +267,6 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
     public interface OnButtonPreparedListener {
         /**
          * 当按钮初始化完成时回调
-         *
-         * Call when the buttons are first Prepared
          * */
         void onPrepared(ArrayList<PopupButton> bts);
     }
@@ -289,7 +284,6 @@ public class PopupCircleView extends RelativeLayout implements Handler.Callback 
             if (mPopup.getVisibility() == INVISIBLE && getChildAt(0) != null && mTriggerRect.contains((int) ev.getRawX(), (int) ev.getRawY()))
                 getChildAt(getChildCount() - 1).performClick();
             mHandler.removeMessages(ACTION_DOWN);
-
         }
     }
 

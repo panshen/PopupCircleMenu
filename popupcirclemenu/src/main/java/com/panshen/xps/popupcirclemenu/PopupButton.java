@@ -214,13 +214,15 @@ public class PopupButton extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 float[] pos = {0, 0};
                 float animscaledValue = Float.valueOf(animation.getAnimatedValue("anim_scale") + "");
+                float animalphaValue = Float.valueOf(animation.getAnimatedValue("anim_alpha") + "");
                 float currentDis = mPathMeasureExplode.getLength() - animscaledValue;
                 mPathMeasureExplode.getPosTan(currentDis, pos, null);
+
                 setX(pos[0]);
                 setY(pos[1]);
 
-                float animalphaValue = Float.valueOf(animation.getAnimatedValue("anim_alpha") + "");
                 setAlpha(animalphaValue);
+
             }
         });
         mAnimeExplode.addListener(new AnimatorListenerAdapter() {

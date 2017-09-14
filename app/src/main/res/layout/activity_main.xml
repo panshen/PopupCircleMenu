@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        app:pc_anim_duration="200"
+        app:pc_anim_duration="250"
         app:pc_radius="100dp">
 
         <com.panshen.xps.popupcirclemenu.PopupButton
