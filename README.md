@@ -19,7 +19,7 @@ PopupCircleMenu
 
 
 	dependencies {
-		compile 'com.github.panshen:PopupCircleMenu:v0.1'
+		compile 'com.github.panshen:PopupCircleMenu:v0.3'
 	}
 	
 ```
